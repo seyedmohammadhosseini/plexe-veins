@@ -33,6 +33,7 @@
 #include "veins/modules/analogueModel/PERModel.h"
 #include "veins/modules/analogueModel/SimpleObstacleShadowing.h"
 #include "veins/modules/analogueModel/TwoRayInterferenceModel.h"
+#include "veins/modules/analogueModel/AutoCorrelatedTwoRayInterferenceModel.h"
 #include "veins/modules/analogueModel/NakagamiFading.h"
 #include "veins/base/connectionManager/BaseConnectionManager.h"
 #include "veins/modules/utility/Consts80211p.h"
@@ -90,6 +91,11 @@ AnalogueModel* PhyLayer80211p::getAnalogueModelFromName(std::string name, Parame
 		if (world->use2D()) error("The TwoRayInterferenceModel uses nodes' z-position as the antenna height over ground. Refusing to work in a 2D world");
 		return initializeTwoRayInterferenceModel(params);
 	}
+    else if (name == "AutoCorrelatedTwoRayInterferenceModel")
+    {
+        if (world->use2D()) error("The AutoCorrelatedTwoRayInterferenceModel uses nodes' z-position as the antenna height over ground. Refusing to work in a 2D world");
+        return initializeAutoCorrelatedTwoRayInterferenceModel(params);
+    }
 	else if (name == "NakagamiFading")
 	{
 		return initializeNakagamiFading(params);
@@ -217,11 +223,31 @@ AnalogueModel* PhyLayer80211p::initializeBreakpointPathlossModel(ParameterMap& p
 }
 
 AnalogueModel* PhyLayer80211p::initializeTwoRayInterferenceModel(ParameterMap& params) {
-	ASSERT(params.count("DielectricConstant") == 1);
+    ASSERT(params.count("DielectricConstant") == 1);
 
-	double dielectricConstant= params["DielectricConstant"].doubleValue();
+    double dielectricConstant= params["DielectricConstant"].doubleValue();
 
-	return new TwoRayInterferenceModel(dielectricConstant, coreDebug);
+    return new TwoRayInterferenceModel(dielectricConstant, coreDebug);
+}
+
+AnalogueModel* PhyLayer80211p::initializeAutoCorrelatedTwoRayInterferenceModel(ParameterMap& params) {
+    ASSERT(params.count("DielectricConstantReal") == 1);
+    ASSERT(params.count("DielectricConstantImag") == 1);
+    ASSERT(params.count("stdDev") == 1);
+    ASSERT(params.count("g_LOS") == 1);
+    ASSERT(params.count("g_gr_LOS") == 1);
+    ASSERT(params.count("CorrelationDistance") == 1);
+    ASSERT(params.count("delta_phi") == 1);
+
+    double stdDev = params["stdDev"].doubleValue();
+    double correlationDistance = params["CorrelationDistance"].doubleValue();
+    double eps_r_real = params["DielectricConstantReal"].doubleValue();
+    double eps_r_imag = params["DielectricConstantImag"].doubleValue();
+    double g_LOS = params["g_LOS"].doubleValue();
+    double g_gr_LOS = params["g_gr_LOS"].doubleValue();
+    double delta_phi = params["delta_phi"].doubleValue();
+
+    return new AutoCorrelatedTwoRayInterferenceModel(eps_r_real, eps_r_imag, correlationDistance, g_LOS, g_gr_LOS, delta_phi, stdDev, coreDebug);
 }
 
 AnalogueModel* PhyLayer80211p::initializeNakagamiFading(ParameterMap& params) {
