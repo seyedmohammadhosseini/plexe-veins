@@ -67,6 +67,7 @@ class Decider80211p: public BaseDecider {
 	protected:
 		// threshold value for checking a SNR-map (SNR-threshold)
 		double snrThreshold;
+		cOutVector recordRxPower;
 
 		/** @brief Power level threshold used to declare channel busy if
 		 * preamble portion is missed (802.11-2012 18.3.10.6
@@ -207,6 +208,7 @@ class Decider80211p: public BaseDecider {
 			collisions(0) {
 			phy11p = dynamic_cast<Decider80211pToPhy80211pInterface*>(phy);
 			assert(phy11p);
+			recordRxPower.setName("Received RSSI");
 
 		}
 

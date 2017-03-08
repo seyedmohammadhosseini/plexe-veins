@@ -202,6 +202,8 @@ DeciderResult* Decider80211p::checkIfSignalOk(AirFrame* frame) {
 	st.setTime(s.getReceptionStart());
 	st.setArgValue(Dimension::frequency(), centerFrequency);
 	double recvPower_dBm = 10*log10(s.getReceivingPower()->getValue(st));
+	// recordRxPower.recordWithTimestamp(start, recvPower_dBm);
+	recordRxPower.record(recvPower_dBm);
 
 	start = start + PHY_HDR_PREAMBLE_DURATION; //its ok if something in the training phase is broken
 
