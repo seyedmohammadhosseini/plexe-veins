@@ -33,7 +33,21 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
 	const Coord senderPos2D(senderPos.x, senderPos.y);
 	const Coord receiverPos2D(receiverPos.x, receiverPos.y);
 
-	double delta_d = 1;
+	double delta_d;
+
+	if (firstTime) {
+	    delta_d = 0;
+	    firstTime = false;
+	} else {
+	    double dTx = std::sqrt(pow(oldTxPosX - senderPos.x, 2) + pow(oldTxPosY - senderPos.y, 2));
+	    double dRx = std::sqrt(pow(oldRxPosX - receiverPos.x, 2) + pow(oldRxPosY - receiverPos.y, 2));
+	    delta_d = (dTx + dRx)/2;
+	}
+
+    oldTxPosX = senderPos.x;
+    oldTxPosY = senderPos.y;
+    oldRxPosX = receiverPos.x;
+    oldRxPosY = receiverPos.y;
 
 	ASSERT(senderPos.z > 0); // make sure send a    ntenna is above ground
 	ASSERT(receiverPos.z > 0); // make sure receive antenna is above ground

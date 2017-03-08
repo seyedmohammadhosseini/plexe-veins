@@ -56,12 +56,19 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
 			debug(debug) {
 		    epsilon_r.real(dielectricConstantReal);
 		    epsilon_r.imag(dielectricConstantImag);
+		    oldTxPosX = 0.0;
+		    oldTxPosY = 0.0;
+		    oldRxPosX = 0.0;
+		    oldRxPosY = 0.0;
+		    firstTime = true;
 		}
 
 		virtual ~AutoCorrelatedTwoRayInterferenceModel() {}
 
 		virtual void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos);
 
+	private:
+		bool firstTime;
 
 	protected:
 
@@ -122,6 +129,11 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
 		double g_LOS;
 		double g_gr_LOS;
 		double delta_phi;
+
+		double oldTxPosX;
+		double oldTxPosY;
+		double oldRxPosX;
+		double oldRxPosY;
 
 		/** @brief The standard deviation for the stochastic process */
 		double stdDev;
