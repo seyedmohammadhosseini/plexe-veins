@@ -49,6 +49,12 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
     oldRxPosX = receiverPos.x;
     oldRxPosY = receiverPos.y;
 
+    receiverPosx.record(oldRxPosX);
+    receiverPosy.record(oldRxPosY);
+    transmitterPosx.record(oldTxPosX);
+    transmitterPosy.record(oldTxPosY);
+    channel_d.record(delta_d);
+
 	ASSERT(senderPos.z > 0); // make sure send a    ntenna is above ground
 	ASSERT(receiverPos.z > 0); // make sure receive antenna is above ground
 
@@ -72,10 +78,12 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
 	assert(hasFrequency);
 
 	debugEV << "Add TwoRayInterferenceModel attenuation (gamma, d, d_dir, d_ref) = (" << reflectionCoeff << ", " << d << ", " << d_dir << ", " << d_ref << ")" << endl;
-    s.addAttenuation(new AutoCorrelatedTwoRayInterferenceModel::Mapping(reflectionCoeff, d, d_dir, d_ref, g_LOS, g_gr_LOS, delta_phi, correlationDistance, delta_d, stdDev, debug));
+    s.addAttenuation(new AutoCorrelatedTwoRayInterferenceMapping(this, reflectionCoeff, d, d_dir, d_ref, delta_d, debug));
+
+    if (firstTime) {firstTime = false;}
 }
 
-double AutoCorrelatedTwoRayInterferenceModel::Mapping::getValue(const Argument& pos) const {
+double AutoCorrelatedTwoRayInterferenceMapping::getValue(const Argument& pos) const {
 
 	assert(pos.hasArgVal(Dimension::frequency()));
 	double freq = pos.getArgValue(Dimension::frequency());
@@ -83,33 +91,31 @@ double AutoCorrelatedTwoRayInterferenceModel::Mapping::getValue(const Argument& 
     double k = 2*M_PI/lambda;
 	double phi =  k * (d_dir - d_ref);
 
-	g_LOS = std::pow(10, g_LOS/20.0);
-	g_gr_LOS = std::pow(10, g_gr_LOS/20.0);
-
 	dcomplex i = dcomplex(0,1);
-	dcomplex A = std::exp(-i*k*d_dir)/d_dir + std::sqrt(g_gr_LOS) * std::exp(i*delta_phi) * reflectionCoeff * std::exp(-i*k*d_ref)/d_ref;
+	dcomplex A = std::exp(-i*k*d_dir)/d_dir + std::sqrt(model->g_gr_LOS) * std::exp(i*model->delta_phi) * reflectionCoeff * std::exp(-i*k*d_ref)/d_ref;
 	double A_abs = std::abs(A);
 
-    double att = 20*log10(4*M_PI/lambda) - 10*log10(g_LOS) - 20*log10(A_abs);
+    double att = 20*log10(4*M_PI/lambda) - 10*log10(model->g_LOS) - 20*log10(A_abs);
 
-    debugEV << "(k, g_LOS, g_gr_LOS, delta_phi, delta_d, stdDev) = (" << k << ", " << g_LOS << ", " << g_gr_LOS << ", " << delta_phi << ", " << delta_d << ", " << sigma << ")" << endl;
+    debugEV << "(k, g_LOS, g_gr_LOS, delta_phi, delta_d, stdDev) = (" << k << ", " << model->g_LOS << ", " << model->g_gr_LOS << ", " << model->delta_phi << ", " << delta_d << ", " << model->stdDev << ")" << endl;
 
-    if (firstTime) {
-        EV << "First time in process; generating process value." << endl;
-        prevProcessValue = (RNGCONTEXT normal(0, sigma));
-        firstTime = false;
+    if (model->firstTime) {
+        prevProcessValue = (RNGCONTEXT normal(0, model->stdDev));
     } else {
-        double rho          = exp(-std::abs(delta_d/correlationDistance));
+        double rho          = exp(-std::abs(delta_d/model->correlationDistance));
         double new_mean     = rho*prevProcessValue;
-        double new_var      = pow(sigma,2)*(1-pow(rho,2));
+        double new_var      = pow(model->stdDev,2)*(1-pow(rho,2));
         prevProcessValue    = (RNGCONTEXT normal(new_mean, sqrt(new_var)));
-        EV << "firstTime is now false. (correlation, mean, var) = (" << rho << ", " << new_mean << ", " << new_var <<")" << endl;
+        EV << "(correlation, mean, var) = (" << rho << ", " << new_mean << ", " << new_var <<")" << endl;
     }
 
     double att_process = att + prevProcessValue;
 
     double gain_dB = -att;
     double gain_dB_process = -att_process;
+
+    model->deterministicGain.record(gain_dB);
+    model->stochasticGain.record(gain_dB_process);
 
     double gain_linear = pow(10, gain_dB/10);
     double gain_linear_process = pow(10, gain_dB_process/10);

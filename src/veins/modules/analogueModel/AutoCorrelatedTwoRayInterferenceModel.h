@@ -31,6 +31,8 @@
 using Veins::AirFrame;
 typedef std::complex<double> dcomplex;
 
+class AutoCorrelatedTwoRayInterferenceMapping;
+
 /**
  * @brief
  * Extended version of Two-Ray Ground path loss model.
@@ -44,102 +46,100 @@ typedef std::complex<double> dcomplex;
  */
 class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
 
+    protected:
+        friend class AutoCorrelatedTwoRayInterferenceMapping;
+
+        bool firstTime;
+
+        dcomplex epsilon_r;
+
+        double correlationDistance;
+        double g_LOS;
+        dcomplex g_gr_LOS;
+        double delta_phi;
+        double stdDev;
+
+        double oldTxPosX;
+        double oldTxPosY;
+        double oldRxPosX;
+        double oldRxPosY;
+
+        bool debug;
+
+        cOutVector deterministicGain;
+        cOutVector stochasticGain;
+        cOutVector receiverPosx;
+        cOutVector receiverPosy;
+        cOutVector transmitterPosx;
+        cOutVector transmitterPosy;
+        cOutVector channel_d;
+
 	public:
 		AutoCorrelatedTwoRayInterferenceModel(double dielectricConstantReal, double dielectricConstantImag, double correlationDistance,
-                                              double g_LOS, double g_gr_LOS, double delta_phi,
-                                              double stdDev, bool debug) :
-			correlationDistance(correlationDistance),
-			g_LOS(g_LOS),
-			g_gr_LOS(g_gr_LOS),
-			delta_phi(delta_phi),
-			stdDev(stdDev),
-			debug(debug) {
-		    epsilon_r.real(dielectricConstantReal);
-		    epsilon_r.imag(dielectricConstantImag);
-		    oldTxPosX = 0.0;
-		    oldTxPosY = 0.0;
-		    oldRxPosX = 0.0;
-		    oldRxPosY = 0.0;
-		    firstTime = true;
+                                              double g_LOS, double g_gr_LOS, double delta_phi, double stdDev, bool debug) :
+                                                  correlationDistance(correlationDistance), delta_phi(delta_phi), stdDev(stdDev), debug(debug) {
+
+                epsilon_r.real(dielectricConstantReal);
+                epsilon_r.imag(dielectricConstantImag);
+
+                this->g_LOS = std::pow(10, g_LOS/20.0);
+                this->g_gr_LOS = std::pow(10, g_gr_LOS/20.0);
+
+                oldTxPosX = 0.0;
+                oldTxPosY = 0.0;
+                oldRxPosX = 0.0;
+                oldRxPosY = 0.0;
+                firstTime = true;
+
+                deterministicGain.setName("DeterministicGain");
+                stochasticGain.setName("StochasticGain");
+                receiverPosx.setName("x Rx");
+                receiverPosy.setName("y Rx");
+                transmitterPosx.setName("x Tx");
+                transmitterPosy.setName("y_Tx");
+                channel_d.setName("delta_d");
+
 		}
 
 		virtual ~AutoCorrelatedTwoRayInterferenceModel() {}
 
 		virtual void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos);
 
-	private:
-		bool firstTime;
+};
 
-	protected:
+class AutoCorrelatedTwoRayInterferenceMapping: public SimpleConstMapping {
+    private:
+        mutable double prevProcessValue;
+        AutoCorrelatedTwoRayInterferenceModel* model;
 
-		class Mapping: public SimpleConstMapping {
-		    private:
-		        mutable bool firstTime;
-		        mutable double prevProcessValue;
+    protected:
+        dcomplex reflectionCoeff;
+        double d;
+        double d_dir;
+        double d_ref;
+        double lambda;
+        double delta_d;
+        bool debug;
 
-			protected:
-				dcomplex reflectionCoeff;
-				double d;
-				double d_dir;
-				double d_ref;
-				double lambda;
-				mutable double g_LOS;
-                mutable dcomplex g_gr_LOS;
-                double delta_phi;
-                double correlationDistance;
+    public:
+        AutoCorrelatedTwoRayInterferenceMapping(AutoCorrelatedTwoRayInterferenceModel* model, dcomplex reflectionCoeff,
+                double distance, double directDistance, double reflDistance, double delta_d, bool debug)
+            : SimpleConstMapping(DimensionSet::timeFreqDomain()),
+            model(model),
+            reflectionCoeff(reflectionCoeff),
+            d(distance),
+            d_dir(directDistance),
+            d_ref(reflDistance),
+            delta_d(delta_d),
+            debug(debug) {
+                prevProcessValue = 0.0;
+        }
 
-				/** @brief Standard deviation */
-				double sigma;
+        virtual double getValue(const Argument& pos) const;
 
-				/** @brief Delta_d */
-				double delta_d;
-
-				bool debug;
-			public:
-				Mapping(dcomplex reflectionCoeff, double distance, double directDistance, double reflDistance,
-				        double g_LOS, double g_gr_LOS, double delta_phi, double correlationDistance,
-				        double delta_d, double sigma, bool debug)
-					: SimpleConstMapping(DimensionSet::timeFreqDomain()),
-                    reflectionCoeff(reflectionCoeff),
-					d(distance),
-					d_dir(directDistance),
-					d_ref(reflDistance),
-					g_LOS(g_LOS),
-					g_gr_LOS(g_gr_LOS),
-					delta_phi(delta_phi),
-					correlationDistance(correlationDistance),
-					sigma(sigma),
-					delta_d(delta_d),
-					debug(debug) {
-				    firstTime = true;
-				    prevProcessValue = 0.0;
-				}
-
-				virtual double getValue(const Argument& pos) const;
-
-				ConstMapping* constClone() const {
-					return new Mapping(*this);
-				}
-		};
-
-		/** @brief stores the dielectric constant used for calculation */
-		dcomplex epsilon_r;
-
-        double correlationDistance;
-		double g_LOS;
-		double g_gr_LOS;
-		double delta_phi;
-
-		double oldTxPosX;
-		double oldTxPosY;
-		double oldRxPosX;
-		double oldRxPosY;
-
-		/** @brief The standard deviation for the stochastic process */
-		double stdDev;
-
-		/** @brief Whether debug messages should be displayed. */
-		bool debug;
+        ConstMapping* constClone() const {
+            return new AutoCorrelatedTwoRayInterferenceMapping(*this);
+        }
 };
 
 #endif /* ANALOGUEMODEL_AUTOCORRELATEDTWORAYINTERFERENCEMODEL_H */
