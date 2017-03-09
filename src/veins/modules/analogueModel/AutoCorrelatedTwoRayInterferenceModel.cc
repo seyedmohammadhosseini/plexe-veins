@@ -99,15 +99,7 @@ double AutoCorrelatedTwoRayInterferenceMapping::getValue(const Argument& pos) co
 
     debugEV << "(k, g_LOS, g_gr_LOS, delta_phi, delta_d, stdDev) = (" << k << ", " << model->g_LOS << ", " << model->g_gr_LOS << ", " << model->delta_phi << ", " << delta_d << ", " << model->stdDev << ")" << endl;
 
-    if (model->firstTime) {
-        prevProcessValue = (RNGCONTEXT normal(0, model->stdDev));
-    } else {
-        double rho          = exp(-std::abs(delta_d/model->correlationDistance));
-        double new_mean     = rho*prevProcessValue;
-        double new_var      = pow(model->stdDev,2)*(1-pow(rho,2));
-        prevProcessValue    = (RNGCONTEXT normal(new_mean, sqrt(new_var)));
-        EV << "(correlation, mean, var) = (" << rho << ", " << new_mean << ", " << new_var <<")" << endl;
-    }
+    double prevProcessValue = proc->getProcessValue(delta_d);
 
     double att_process = att + prevProcessValue;
 

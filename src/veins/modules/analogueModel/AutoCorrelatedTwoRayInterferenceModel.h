@@ -26,6 +26,7 @@
 #include "veins/base/phyLayer/AnalogueModel.h"
 #include "veins/base/modules/BaseWorldUtility.h"
 #include "veins/base/phyLayer/MappingBase.h"
+#include "veins/modules/utility/AutoCorrelationProcess.h"
 
 
 using Veins::AirFrame;
@@ -109,7 +110,7 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
 
 class AutoCorrelatedTwoRayInterferenceMapping: public SimpleConstMapping {
     private:
-        mutable double prevProcessValue;
+        Veins::AutoCorrelationProcess* proc;
         AutoCorrelatedTwoRayInterferenceModel* model;
 
     protected:
@@ -132,7 +133,7 @@ class AutoCorrelatedTwoRayInterferenceMapping: public SimpleConstMapping {
             d_ref(reflDistance),
             delta_d(delta_d),
             debug(debug) {
-                prevProcessValue = 0.0;
+                proc = new Veins::AutoCorrelationProcess(model->correlationDistance, model->stdDev);
         }
 
         virtual double getValue(const Argument& pos) const;
