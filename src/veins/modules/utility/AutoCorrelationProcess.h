@@ -16,7 +16,7 @@ public:
     double getProcessValue(double dist) const;
 private:
     mutable bool firstTime;
-    mutable double prevProcessValue;
+    mutable double processValue;
 
     double correlationDistance;
     double sigma;

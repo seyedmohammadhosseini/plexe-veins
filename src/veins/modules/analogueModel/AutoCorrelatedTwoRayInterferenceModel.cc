@@ -28,21 +28,21 @@ using Veins::AirFrame;
 #define debugEV EV << "PhyLagammayer(AutoCorrelatedTwoRayInterferenceModel): "
 
 void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const Coord& senderPos, const Coord& receiverPos) {
-	Signal& s = frame->getSignal();
+    Signal& s = frame->getSignal();
 
-	const Coord senderPos2D(senderPos.x, senderPos.y);
-	const Coord receiverPos2D(receiverPos.x, receiverPos.y);
+    const Coord senderPos2D(senderPos.x, senderPos.y);
+    const Coord receiverPos2D(receiverPos.x, receiverPos.y);
 
-	double delta_d;
+    double delta_d;
 
-	if (firstTime) {
-	    delta_d = 0;
-	    firstTime = false;
-	} else {
-	    double dTx = std::sqrt(pow(oldTxPosX - senderPos.x, 2) + pow(oldTxPosY - senderPos.y, 2));
-	    double dRx = std::sqrt(pow(oldRxPosX - receiverPos.x, 2) + pow(oldRxPosY - receiverPos.y, 2));
-	    delta_d = (dTx + dRx)/2;
-	}
+    if (firstTime) {
+        delta_d = 0;
+        firstTime = false;
+    } else {
+        double dTx = std::sqrt(pow(oldTxPosX - senderPos.x, 2) + pow(oldTxPosY - senderPos.y, 2));
+        double dRx = std::sqrt(pow(oldRxPosX - receiverPos.x, 2) + pow(oldRxPosY - receiverPos.y, 2));
+        delta_d = (dTx + dRx)/2;
+    }
 
     oldTxPosX = senderPos.x;
     oldTxPosY = senderPos.y;
@@ -55,29 +55,29 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
     transmitterPosy.record(oldTxPosY);
     channel_d.record(delta_d);
 
-	ASSERT(senderPos.z > 0); // make sure send a    ntenna is above ground
-	ASSERT(receiverPos.z > 0); // make sure receive antenna is above ground
+    ASSERT(senderPos.z > 0); // make sure send a    ntenna is above ground
+    ASSERT(receiverPos.z > 0); // make sure receive antenna is above ground
 
-	double d = senderPos2D.distance(receiverPos2D);
-	double ht = senderPos.z, hr = receiverPos.z;
+    double d = senderPos2D.distance(receiverPos2D);
+    double ht = senderPos.z, hr = receiverPos.z;
 
-	debugEV << "(ht, hr) = (" << ht << ", " << hr << ")" << endl;
+    debugEV << "(ht, hr) = (" << ht << ", " << hr << ")" << endl;
 
-	double d_dir = sqrt( pow (d,2) + pow((ht - hr),2) ); // direct distance
-	double d_ref = sqrt( pow (d,2) + pow((ht + hr),2) ); // distance via ground reflection
-	double sin_theta = (ht + hr)/d_ref;
-	double cos_theta = d/d_ref;
+    double d_dir = sqrt( pow (d,2) + pow((ht - hr),2) ); // direct distance
+    double d_ref = sqrt( pow (d,2) + pow((ht + hr),2) ); // distance via ground reflection
+    double sin_theta = (ht + hr)/d_ref;
+    double cos_theta = d/d_ref;
 
-	dcomplex reflectionCoeff = (epsilon_r*sin_theta - std::sqrt(epsilon_r - std::pow(cos_theta,2)))/
-	                           (epsilon_r*sin_theta + std::sqrt(epsilon_r - std::pow(cos_theta,2)));
+    dcomplex reflectionCoeff = (epsilon_r*sin_theta - std::sqrt(epsilon_r - std::pow(cos_theta,2)))/
+                               (epsilon_r*sin_theta + std::sqrt(epsilon_r - std::pow(cos_theta,2)));
 
-	//is the signal defined to attenuate over frequency?
-	bool hasFrequency = s.getTransmissionPower()->getDimensionSet().hasDimension(Dimension::frequency());
-	debugEV << "Signal contains frequency dimension: " << (hasFrequency ? "yes" : "no") << endl;
+    //is the signal defined to attenuate over frequency?
+    bool hasFrequency = s.getTransmissionPower()->getDimensionSet().hasDimension(Dimension::frequency());
+    debugEV << "Signal contains frequency dimension: " << (hasFrequency ? "yes" : "no") << endl;
 
-	assert(hasFrequency);
+    assert(hasFrequency);
 
-	debugEV << "Add TwoRayInterferenceModel attenuation (gamma, d, d_dir, d_ref) = (" << reflectionCoeff << ", " << d << ", " << d_dir << ", " << d_ref << ")" << endl;
+    debugEV << "Add TwoRayInterferenceModel attenuation (gamma, d, d_dir, d_ref) = (" << reflectionCoeff << ", " << d << ", " << d_dir << ", " << d_ref << ")" << endl;
     s.addAttenuation(new AutoCorrelatedTwoRayInterferenceMapping(this, reflectionCoeff, d, d_dir, d_ref, delta_d, debug));
 
     if (firstTime) {firstTime = false;}
@@ -85,15 +85,15 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
 
 double AutoCorrelatedTwoRayInterferenceMapping::getValue(const Argument& pos) const {
 
-	assert(pos.hasArgVal(Dimension::frequency()));
-	double freq = pos.getArgValue(Dimension::frequency());
-	double lambda = BaseWorldUtility::speedOfLight() / freq;
+    assert(pos.hasArgVal(Dimension::frequency()));
+    double freq = pos.getArgValue(Dimension::frequency());
+    double lambda = BaseWorldUtility::speedOfLight() / freq;
     double k = 2*M_PI/lambda;
-	double phi =  k * (d_dir - d_ref);
+    double phi =  k * (d_dir - d_ref);
 
-	dcomplex i = dcomplex(0,1);
-	dcomplex A = std::exp(-i*k*d_dir)/d_dir + std::sqrt(model->g_gr_LOS) * std::exp(i*model->delta_phi) * reflectionCoeff * std::exp(-i*k*d_ref)/d_ref;
-	double A_abs = std::abs(A);
+    dcomplex i = dcomplex(0,1);
+    dcomplex A = std::exp(-i*k*d_dir)/d_dir + std::sqrt(model->g_gr_LOS) * std::exp(i*model->delta_phi) * reflectionCoeff * std::exp(-i*k*d_ref)/d_ref;
+    double A_abs = std::abs(A);
 
     double att = 20*log10(4*M_PI/lambda) - 10*log10(model->g_LOS) - 20*log10(A_abs);
 
@@ -121,6 +121,6 @@ double AutoCorrelatedTwoRayInterferenceMapping::getValue(const Argument& pos) co
 
     EV << "New process value = " << gain_linear_process << endl;
 
-	return gain_linear_process;
+    return gain_linear_process;
 }
 

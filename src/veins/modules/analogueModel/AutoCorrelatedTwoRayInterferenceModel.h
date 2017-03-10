@@ -75,8 +75,8 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
         cOutVector transmitterPosy;
         cOutVector channel_d;
 
-	public:
-		AutoCorrelatedTwoRayInterferenceModel(double dielectricConstantReal, double dielectricConstantImag, double correlationDistance,
+    public:
+        AutoCorrelatedTwoRayInterferenceModel(double dielectricConstantReal, double dielectricConstantImag, double correlationDistance,
                                               double g_LOS, double g_gr_LOS, double delta_phi, double stdDev, bool debug) :
                                                   correlationDistance(correlationDistance), delta_phi(delta_phi), stdDev(stdDev), debug(debug) {
 
@@ -100,11 +100,11 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
                 transmitterPosy.setName("y_Tx");
                 channel_d.setName("delta_d");
 
-		}
+        }
 
-		virtual ~AutoCorrelatedTwoRayInterferenceModel() {}
+        virtual ~AutoCorrelatedTwoRayInterferenceModel() {}
 
-		virtual void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos);
+        virtual void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos);
 
 };
 
@@ -124,13 +124,13 @@ class AutoCorrelatedTwoRayInterferenceMapping: public SimpleConstMapping {
 
     public:
         AutoCorrelatedTwoRayInterferenceMapping(AutoCorrelatedTwoRayInterferenceModel* model, dcomplex reflectionCoeff,
-                double distance, double directDistance, double reflDistance, double delta_d, bool debug)
+                double d, double d_dir, double d_ref, double delta_d, bool debug)
             : SimpleConstMapping(DimensionSet::timeFreqDomain()),
             model(model),
             reflectionCoeff(reflectionCoeff),
-            d(distance),
-            d_dir(directDistance),
-            d_ref(reflDistance),
+            d(d),
+            d_dir(d_dir),
+            d_ref(d_ref),
             delta_d(delta_d),
             debug(debug) {
                 proc = new AutoCorrelationProcess(model->correlationDistance, model->stdDev);
