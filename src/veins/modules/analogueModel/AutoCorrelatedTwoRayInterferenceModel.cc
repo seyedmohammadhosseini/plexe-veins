@@ -44,6 +44,8 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
         delta_d = (dTx + dRx)/2;
     }
 
+    processValue = proc->getProcessValue(delta_d);
+
     oldTxPosX = senderPos.x;
     oldTxPosY = senderPos.y;
     oldRxPosX = receiverPos.x;
@@ -78,7 +80,7 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
     assert(hasFrequency);
 
     debugEV << "Add TwoRayInterferenceModel attenuation (gamma, d, d_dir, d_ref) = (" << reflectionCoeff << ", " << d << ", " << d_dir << ", " << d_ref << ")" << endl;
-    s.addAttenuation(new AutoCorrelatedTwoRayInterferenceMapping(this, reflectionCoeff, d, d_dir, d_ref, delta_d, debug));
+    s.addAttenuation(new AutoCorrelatedTwoRayInterferenceMapping(this, reflectionCoeff, d, d_dir, d_ref, debug));
 
     if (firstTime) {firstTime = false;}
 }
@@ -99,9 +101,7 @@ double AutoCorrelatedTwoRayInterferenceMapping::getValue(const Argument& pos) co
 
     debugEV << "(k, g_LOS, g_gr_LOS, delta_phi, delta_d, stdDev) = (" << k << ", " << model->g_LOS << ", " << model->g_gr_LOS << ", " << model->delta_phi << ", " << delta_d << ", " << model->stdDev << ")" << endl;
 
-    double prevProcessValue = proc->getProcessValue(delta_d);
-
-    double att_process = att + prevProcessValue;
+    double att_process = att + model->processValue;
 
     double gain_dB = -att;
     double gain_dB_process = -att_process;
@@ -116,10 +116,7 @@ double AutoCorrelatedTwoRayInterferenceMapping::getValue(const Argument& pos) co
     debugEV << "gain [process] = " << gain_dB_process << " dB" << endl;
     debugEV << "gain = " << gain_linear << " []" << endl;
     debugEV << "gain [process] = " << gain_linear_process << " []" << endl;
-
     debugEV << "Add gain for (freq, lambda, phi, gamma, att, att_dBm) = (" << freq << ", " << lambda << ", " << phi << ", " << reflectionCoeff << ", " << gain_linear << ", " << FWMath::mW2dBm(gain_linear) << ")" << endl;
-
-    EV << "New process value = " << gain_linear_process << endl;
 
     return gain_linear_process;
 }

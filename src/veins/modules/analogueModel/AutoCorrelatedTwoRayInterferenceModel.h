@@ -50,11 +50,10 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
     protected:
         friend class AutoCorrelatedTwoRayInterferenceMapping;
 
-        bool firstTime;
-
+        AutoCorrelationProcess* proc;
         dcomplex epsilon_r;
-
         double correlationDistance;
+        double processValue;
         double g_LOS;
         dcomplex g_gr_LOS;
         double delta_phi;
@@ -65,6 +64,7 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
         double oldRxPosX;
         double oldRxPosY;
 
+        bool firstTime;
         bool debug;
 
         cOutVector deterministicGain;
@@ -82,7 +82,7 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
 
                 epsilon_r.real(dielectricConstantReal);
                 epsilon_r.imag(dielectricConstantImag);
-
+                proc = new AutoCorrelationProcess(correlationDistance, stdDev);
                 this->g_LOS = std::pow(10, g_LOS/20.0);
                 this->g_gr_LOS = std::pow(10, g_gr_LOS/20.0);
 
@@ -110,7 +110,6 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
 
 class AutoCorrelatedTwoRayInterferenceMapping: public SimpleConstMapping {
     private:
-        AutoCorrelationProcess* proc;
         AutoCorrelatedTwoRayInterferenceModel* model;
 
     protected:
@@ -119,22 +118,18 @@ class AutoCorrelatedTwoRayInterferenceMapping: public SimpleConstMapping {
         double d_dir;
         double d_ref;
         double lambda;
-        double delta_d;
         bool debug;
 
     public:
         AutoCorrelatedTwoRayInterferenceMapping(AutoCorrelatedTwoRayInterferenceModel* model, dcomplex reflectionCoeff,
-                double d, double d_dir, double d_ref, double delta_d, bool debug)
+                double d, double d_dir, double d_ref, bool debug)
             : SimpleConstMapping(DimensionSet::timeFreqDomain()),
             model(model),
             reflectionCoeff(reflectionCoeff),
             d(d),
             d_dir(d_dir),
             d_ref(d_ref),
-            delta_d(delta_d),
-            debug(debug) {
-                proc = new AutoCorrelationProcess(model->correlationDistance, model->stdDev);
-        }
+            debug(debug) {}
 
         virtual double getValue(const Argument& pos) const;
 
