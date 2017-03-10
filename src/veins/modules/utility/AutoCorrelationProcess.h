@@ -8,7 +8,6 @@
 #ifndef SRC_VEINS_MODULES_UTILITY_AUTOCORRELATIONPROCESS_H_
 #define SRC_VEINS_MODULES_UTILITY_AUTOCORRELATIONPROCESS_H_
 
-namespace Veins {
 
 class AutoCorrelationProcess {
 public:
@@ -23,5 +22,4 @@ private:
     double sigma;
 };
 
-} // Namespace
 #endif /* SRC_VEINS_MODULES_UTILITY_AUTOCORRELATIONPROCESS_H_ */

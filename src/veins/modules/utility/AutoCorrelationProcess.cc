@@ -8,8 +8,6 @@
 #include "veins/modules/utility/AutoCorrelationProcess.h"
 #include "veins/base/utils/MiXiMDefs.h"
 
-namespace Veins {
-
 double AutoCorrelationProcess::getProcessValue(double distance) const {
 
     if (firstTime) {
@@ -25,5 +23,3 @@ double AutoCorrelationProcess::getProcessValue(double distance) const {
 
     return prevProcessValue;
 }
-
-} /* namespace Veins */

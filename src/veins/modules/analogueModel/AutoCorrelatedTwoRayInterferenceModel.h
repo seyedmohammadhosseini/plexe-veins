@@ -94,9 +94,9 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
 
                 deterministicGain.setName("DeterministicGain");
                 stochasticGain.setName("StochasticGain");
-                receiverPosx.setName("x Rx");
-                receiverPosy.setName("y Rx");
-                transmitterPosx.setName("x Tx");
+                receiverPosx.setName("x_Rx");
+                receiverPosy.setName("y_Rx");
+                transmitterPosx.setName("x_Tx");
                 transmitterPosy.setName("y_Tx");
                 channel_d.setName("delta_d");
 
@@ -110,7 +110,7 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
 
 class AutoCorrelatedTwoRayInterferenceMapping: public SimpleConstMapping {
     private:
-        Veins::AutoCorrelationProcess* proc;
+        AutoCorrelationProcess* proc;
         AutoCorrelatedTwoRayInterferenceModel* model;
 
     protected:
@@ -133,7 +133,7 @@ class AutoCorrelatedTwoRayInterferenceMapping: public SimpleConstMapping {
             d_ref(reflDistance),
             delta_d(delta_d),
             debug(debug) {
-                proc = new Veins::AutoCorrelationProcess(model->correlationDistance, model->stdDev);
+                proc = new AutoCorrelationProcess(model->correlationDistance, model->stdDev);
         }
 
         virtual double getValue(const Argument& pos) const;
