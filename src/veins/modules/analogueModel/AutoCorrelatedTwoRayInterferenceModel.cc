@@ -98,25 +98,17 @@ double AutoCorrelatedTwoRayInterferenceMapping::getValue(const Argument& pos) co
     double A_abs = std::abs(A);
 
     double att = 20*log10(4*M_PI/lambda) - 10*log10(model->g_LOS) - 20*log10(A_abs);
-
-    debugEV << "(k, g_LOS, g_gr_LOS, delta_phi, delta_d, stdDev) = (" << k << ", " << model->g_LOS << ", " << model->g_gr_LOS << ", " << model->delta_phi << ", " << delta_d << ", " << model->stdDev << ")" << endl;
-
     double att_process = att + model->processValue;
 
     double gain_dB = -att;
     double gain_dB_process = -att_process;
-
-    model->deterministicGain.record(gain_dB);
-    model->stochasticGain.record(gain_dB_process);
-
-    double gain_linear = pow(10, gain_dB/10);
     double gain_linear_process = pow(10, gain_dB_process/10);
 
-    debugEV << "gain = " << gain_dB << " dB" << endl;
-    debugEV << "gain [process] = " << gain_dB_process << " dB" << endl;
-    debugEV << "gain = " << gain_linear << " []" << endl;
-    debugEV << "gain [process] = " << gain_linear_process << " []" << endl;
-    debugEV << "Add gain for (freq, lambda, phi, gamma, att, att_dBm) = (" << freq << ", " << lambda << ", " << phi << ", " << reflectionCoeff << ", " << gain_linear << ", " << FWMath::mW2dBm(gain_linear) << ")" << endl;
+    if (debug) {
+        model->deterministicGain.record(gain_dB);
+        model->stochasticGain.record(gain_dB_process);
+        debugEV << "Add gain for (freq, lambda, phi, gamma, att, att_dBm) = (" << freq << ", " << lambda << ", " << phi << ", " << reflectionCoeff << ", " << gain_linear_process << ", " << FWMath::mW2dBm(gain_linear_process) << ")" << endl;
+    }
 
     return gain_linear_process;
 }
