@@ -39,22 +39,20 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
         delta_d = 0;
         firstTime = false;
     } else {
-        double dTx = std::sqrt(pow(oldTxPosX - senderPos.x, 2) + pow(oldTxPosY - senderPos.y, 2));
-        double dRx = std::sqrt(pow(oldRxPosX - receiverPos.x, 2) + pow(oldRxPosY - receiverPos.y, 2));
+        double dTx = senderPos2D.distance(oldSenderPos2D);
+        double dRx = receiverPos2D.distance(oldReceiverPos2D);
         delta_d = (dTx + dRx)/2;
     }
 
     processValue = proc->getProcessValue(delta_d);
 
-    oldTxPosX = senderPos.x;
-    oldTxPosY = senderPos.y;
-    oldRxPosX = receiverPos.x;
-    oldRxPosY = receiverPos.y;
+    oldSenderPos2D = Coord(senderPos2D);
+    oldReceiverPos2D  = Coord(receiverPos2D);
 
-    receiverPosx.record(oldRxPosX);
-    receiverPosy.record(oldRxPosY);
-    transmitterPosx.record(oldTxPosX);
-    transmitterPosy.record(oldTxPosY);
+    receiverPosx.record(oldReceiverPos2D.x);
+    receiverPosy.record(oldReceiverPos2D.y);
+    transmitterPosx.record(oldSenderPos2D.x);
+    transmitterPosy.record(oldSenderPos2D.y);
     channel_d.record(delta_d);
 
     ASSERT(senderPos.z > 0); // make sure send a    ntenna is above ground

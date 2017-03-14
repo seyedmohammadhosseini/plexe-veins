@@ -50,6 +50,9 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
     protected:
         friend class AutoCorrelatedTwoRayInterferenceMapping;
 
+        Coord oldSenderPos2D;
+        Coord oldReceiverPos2D;
+
         AutoCorrelationProcess* proc;
         dcomplex epsilon_r;
         double correlationDistance;
@@ -58,11 +61,6 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
         dcomplex g_gr_LOS;
         double delta_phi;
         double stdDev;
-
-        double oldTxPosX;
-        double oldTxPosY;
-        double oldRxPosX;
-        double oldRxPosY;
 
         bool firstTime;
         bool debug;
@@ -85,11 +83,6 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
                 proc = new AutoCorrelationProcess(correlationDistance, stdDev);
                 this->g_LOS = std::pow(10, g_LOS/20.0);
                 this->g_gr_LOS = std::pow(10, g_gr_LOS/20.0);
-
-                oldTxPosX = 0.0;
-                oldTxPosY = 0.0;
-                oldRxPosX = 0.0;
-                oldRxPosY = 0.0;
                 firstTime = true;
 
                 deterministicGain.setName("DeterministicGain");
