@@ -1,5 +1,4 @@
 //
-// Copyright (C) 2011 Stefan Joerer <stefan.joerer@uibk.ac.at>
 // Copyright (C) 2017 Christian Nelson <christian.nelson@eit.lth.se>
 //
 // Documentation for these modules is at http://veins.car2x.org/
@@ -39,9 +38,37 @@ class AutoCorrelatedTwoRayInterferenceMapping;
  * Extended version of Two-Ray Ground path loss model.
  * Extended version of Two-Ray Interference path loss model.
  *
- * See the Veins website <a href="http://veins.car2x.org/"> for a tutorial, documentation, and publications </a>.
+ * Model and parameters are implemented according to:
  *
- * @author Christian Nelson
+ * Nilsson, M. G., Gustafson, C., Abbas, T., & Tufvesson, F.
+ * A Measurement Based Multilink Shadowing Model for V2V Network Simulations of Highway Scenarios, 1–10.
+ *
+ * An example config.xml for this AnalogueModel can be the following:
+ * @verbatim
+    <AnalogueModels>
+        <AnalogueModel type="AutoCorrelatedTwoRayInterferenceModel">
+            <parameter name="DielectricConstantReal" type="double" value="5.02" />
+            <parameter name="DielectricConstantImag" type="double" value="-0.1" />
+
+            <!-- Given in meters [m] -->
+            <parameter name="CorrelationDistance" type="double" value="36.0" />
+
+            <!-- Given in log scale -->
+            <parameter name="stdDev" type="double" value="3.12" />
+
+            <!-- Given in log scale -->
+            <parameter name="g_LOS" type="double" value="-0.8" />
+
+            <!-- Given in log scale -->
+            <parameter name="g_gr_LOS" type="double" value="-6.42" />
+
+            <!-- Given in radians, NOT in degrees (-34.53 deg)-->
+            <parameter name="delta_phi" type="double" value="-0.60266219071364202" />
+        </AnalogueModel>
+    </AnalogueModels>
+   @endverbatim
+ *
+ * @author Christian Nelson <christian.nelson@eit.lth.se>
  *
  * @ingroup analogueModels
  */

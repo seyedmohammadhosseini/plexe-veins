@@ -1,5 +1,4 @@
 //
-// Copyright (C) 2011 Stefan Joerer <stefan.joerer@uibk.ac.at>
 // Copyright (C) 2017 Christian Nelson <christian.nelson@eit.lth.se>
 //
 // Documentation for these modules is at http://veins.car2x.org/
