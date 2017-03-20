@@ -56,7 +56,6 @@ void AutoCorrelatedSingleSlopeModel::filterSignal(AirFrame *frame, const Coord& 
 
     double d = senderPos2D.distance(receiverPos2D);
 
-    debugEV << "Add AutoCorrelatedSingleSlopeModel attenuation (d) = (" << d << ")" << endl;
     s.addAttenuation(new AutoCorrelatedSingleSlopeMapping(this, d, debug));
 
     if (firstTime) {firstTime = false;}

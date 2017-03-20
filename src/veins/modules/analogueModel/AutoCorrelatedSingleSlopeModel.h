@@ -100,8 +100,8 @@ class AutoCorrelatedSingleSlopeModel: public AnalogueModel {
 
                 this->alpha = std::pow(10, alpha/10);
 
-                deterministicGain.setName("DeterministicGain");
-                stochasticGain.setName("StochasticGain");
+                deterministicGain.setName("SingleSlope_DeterministicGain");
+                stochasticGain.setName("SingleSlope_StochasticGain");
                 receiverPosx.setName("x_Rx");
                 receiverPosy.setName("y_Rx");
                 transmitterPosx.setName("x_Tx");
@@ -126,8 +126,7 @@ class AutoCorrelatedSingleSlopeMapping: public SimpleConstMapping {
 
     public:
         AutoCorrelatedSingleSlopeMapping(AutoCorrelatedSingleSlopeModel* model, double d, bool debug)
-            : SimpleConstMapping(DimensionSet::timeFreqDomain()),
-            model(model), d(d), debug(debug) {}
+            : SimpleConstMapping(DimensionSet::timeFreqDomain()), model(model), d(d), debug(debug) {}
 
         virtual double getValue(const Argument& pos) const;
 
