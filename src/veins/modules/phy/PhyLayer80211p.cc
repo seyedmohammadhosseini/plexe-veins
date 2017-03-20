@@ -97,6 +97,10 @@ AnalogueModel* PhyLayer80211p::getAnalogueModelFromName(std::string name, Parame
         if (world->use2D()) error("The AutoCorrelatedTwoRayInterferenceModel uses nodes' z-position as the antenna height over ground. Refusing to work in a 2D world");
         return initializeAutoCorrelatedTwoRayInterferenceModel(params);
     }
+    else if (name == "AutoCorrelatedSingleSlopeModel")
+    {
+        return initializeAutoCorrelatedSingleSlopeModel(params);
+    }
 	else if (name == "NakagamiFading")
 	{
 		return initializeNakagamiFading(params);
