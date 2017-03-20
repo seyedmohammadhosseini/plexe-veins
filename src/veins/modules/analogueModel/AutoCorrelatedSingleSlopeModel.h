@@ -23,7 +23,7 @@
 
 #include "veins/base/phyLayer/AnalogueModel.h"
 #include "veins/base/phyLayer/MappingBase.h"
-#include "veins/modules/utility/AutoCorrelationProcess.h"
+#include "veins/modules/utility/GudmundsonProcess.h"
 
 
 using Veins::AirFrame;
@@ -80,7 +80,7 @@ class AutoCorrelatedSingleSlopeModel: public AnalogueModel {
         bool firstTime;
         bool debug;
 
-        AutoCorrelationProcess* proc;
+        GudmundsonProcess* proc;
         double processValue;
 
         Coord oldSenderPos2D;
@@ -95,7 +95,7 @@ class AutoCorrelatedSingleSlopeModel: public AnalogueModel {
         AutoCorrelatedSingleSlopeModel(double d0, double PL_d0, double alpha, double correlationDistance, double stdDev, bool debug) :
             d0(d0), PL_d0(PL_d0), correlationDistance(correlationDistance), stdDev(stdDev), debug(debug) {
 
-                proc = new AutoCorrelationProcess(correlationDistance, stdDev);
+                proc = new GudmundsonProcess(correlationDistance, stdDev);
                 firstTime = true;
 
                 this->alpha = std::pow(10, alpha/10);

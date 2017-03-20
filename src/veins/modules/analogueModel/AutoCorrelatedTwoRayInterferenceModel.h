@@ -25,7 +25,7 @@
 #include "veins/base/phyLayer/AnalogueModel.h"
 #include "veins/base/modules/BaseWorldUtility.h"
 #include "veins/base/phyLayer/MappingBase.h"
-#include "veins/modules/utility/AutoCorrelationProcess.h"
+#include "veins/modules/utility/GudmundsonProcess.h"
 
 
 using Veins::AirFrame;
@@ -80,7 +80,7 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
         Coord oldSenderPos2D;
         Coord oldReceiverPos2D;
 
-        AutoCorrelationProcess* proc;
+        GudmundsonProcess* proc;
         dcomplex epsilon_r;
         double correlationDistance;
         double processValue;
@@ -107,7 +107,7 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
 
                 epsilon_r.real(dielectricConstantReal);
                 epsilon_r.imag(dielectricConstantImag);
-                proc = new AutoCorrelationProcess(correlationDistance, stdDev);
+                proc = new GudmundsonProcess(correlationDistance, stdDev);
                 this->g_LOS = std::pow(10, g_LOS/20.0);
                 this->g_gr_LOS = std::pow(10, g_gr_LOS/20.0);
                 firstTime = true;

@@ -18,21 +18,22 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-#ifndef SRC_VEINS_MODULES_UTILITY_AUTOCORRELATIONPROCESS_H_
-#define SRC_VEINS_MODULES_UTILITY_AUTOCORRELATIONPROCESS_H_
+#include "veins/modules/utility/GudmundsonProcess.h"
+#include "veins/base/utils/MiXiMDefs.h"
 
+double GudmundsonProcess::getProcessValue(double distance) const {
 
-class AutoCorrelationProcess {
-public:
-    AutoCorrelationProcess(double correlationDistance, double sigma) : correlationDistance(correlationDistance), sigma(sigma) {};
+    if (firstTime) {
+        processValue = (RNGCONTEXT normal(0, sigma));
+        firstTime = false;
+    } else {
+        double rho          = exp(-std::abs(distance/correlationDistance));
+        double new_mean     = rho*processValue;
+        double new_var      = pow(sigma,2)*(1-pow(rho,2));
+        double oldVal       = processValue;
+        processValue        = (RNGCONTEXT normal(new_mean, sqrt(new_var)));
+        EV << " (old, new, rho, mean, var) = (" << oldVal << ", " << processValue << ", " << rho << ", " << new_mean << ", " << new_var << ")" << endl;
+    }
 
-    double getProcessValue(double dist) const;
-private:
-    mutable bool firstTime;
-    mutable double processValue;
-
-    double correlationDistance;
-    double sigma;
-};
-
-#endif /* SRC_VEINS_MODULES_UTILITY_AUTOCORRELATIONPROCESS_H_ */
+    return processValue;
+}
