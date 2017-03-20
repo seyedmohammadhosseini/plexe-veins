@@ -141,6 +141,12 @@ class PhyLayer80211p	: 	public BasePhyLayer,
         AnalogueModel* initializeAutoCorrelatedTwoRayInterferenceModel(ParameterMap& params);
 
         /**
+         * @brief Creates and initializes a AutoCorrelatedSingleSlopeModel with the
+         * passed parameter values.
+         */
+        AnalogueModel* initializeAutoCorrelatedSingleSlopeModel(ParameterMap& params);
+
+        /**
          * @brief Creates and initializes a NakagamiFading with the
          * passed parameter values.
          */

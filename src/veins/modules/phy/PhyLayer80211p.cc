@@ -34,6 +34,7 @@
 #include "veins/modules/analogueModel/SimpleObstacleShadowing.h"
 #include "veins/modules/analogueModel/TwoRayInterferenceModel.h"
 #include "veins/modules/analogueModel/AutoCorrelatedTwoRayInterferenceModel.h"
+#include "veins/modules/analogueModel/AutoCorrelatedSingleSlopeModel.h"
 #include "veins/modules/analogueModel/NakagamiFading.h"
 #include "veins/base/connectionManager/BaseConnectionManager.h"
 #include "veins/modules/utility/Consts80211p.h"
@@ -248,6 +249,22 @@ AnalogueModel* PhyLayer80211p::initializeAutoCorrelatedTwoRayInterferenceModel(P
     double delta_phi = params["delta_phi"].doubleValue();
 
     return new AutoCorrelatedTwoRayInterferenceModel(eps_r_real, eps_r_imag, correlationDistance, g_LOS, g_gr_LOS, delta_phi, stdDev, coreDebug);
+}
+
+AnalogueModel* PhyLayer80211p::initializeAutoCorrelatedSingleSlopeModel(ParameterMap& params) {
+    ASSERT(params.count("d0") == 1);
+    ASSERT(params.count("PL_d0") == 1);
+    ASSERT(params.count("alpha") == 1);
+    ASSERT(params.count("CorrelationDistance") == 1);
+    ASSERT(params.count("stdDev") == 1);
+
+    double d0 = params["d0"].doubleValue();
+    double PL_d0 = params["PL_d0"].doubleValue();
+    double alpha = params["alpha"].doubleValue();
+    double stdDev = params["stdDev"].doubleValue();
+    double correlationDistance = params["CorrelationDistance"].doubleValue();
+
+    return new AutoCorrelatedSingleSlopeModel(d0, PL_d0, alpha, correlationDistance, stdDev, coreDebug);
 }
 
 AnalogueModel* PhyLayer80211p::initializeNakagamiFading(ParameterMap& params) {
