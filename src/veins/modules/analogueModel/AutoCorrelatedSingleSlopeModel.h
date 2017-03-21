@@ -100,13 +100,13 @@ class AutoCorrelatedSingleSlopeModel: public AnalogueModel {
 
                 this->alpha = std::pow(10, alpha/10);
 
-                deterministicGain.setName("SingleSlope_DeterministicGain");
-                stochasticGain.setName("SingleSlope_StochasticGain");
-                receiverPosx.setName("x_Rx");
-                receiverPosy.setName("y_Rx");
-                transmitterPosx.setName("x_Tx");
-                transmitterPosy.setName("y_Tx");
-                channel_d.setName("delta_d");
+                deterministicGain.setName("AutoCorrelatedSingleSlopeModel_DeterministicGain");
+                stochasticGain.setName("AutoCorrelatedSingleSlopeModel_StochasticGain");
+                receiverPosx.setName("AutoCorrelatedSingleSlopeModel_xRx");
+                receiverPosy.setName("AutoCorrelatedSingleSlopeModel_yRx");
+                transmitterPosx.setName("AutoCorrelatedSingleSlopeModel_xTx");
+                transmitterPosy.setName("AutoCorrelatedSingleSlopeModel_yTx");
+                channel_d.setName("AutoCorrelatedSingleSlopeModel_deltaD");
 
         }
 

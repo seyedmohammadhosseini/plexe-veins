@@ -112,13 +112,13 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
                 this->g_gr_LOS = std::pow(10, g_gr_LOS/20.0);
                 firstTime = true;
 
-                deterministicGain.setName("DeterministicGain");
-                stochasticGain.setName("StochasticGain");
-                receiverPosx.setName("x_Rx");
-                receiverPosy.setName("y_Rx");
-                transmitterPosx.setName("x_Tx");
-                transmitterPosy.setName("y_Tx");
-                channel_d.setName("delta_d");
+                deterministicGain.setName("AutoCorrelatedTwoRayInterferenceModel_DeterministicGain");
+                stochasticGain.setName("AutoCorrelatedTwoRayInterferenceModel_StochasticGain");
+                receiverPosx.setName("AutoCorrelatedTwoRayInterferenceModel_xRx");
+                receiverPosy.setName("AutoCorrelatedTwoRayInterferenceModel_yRx");
+                transmitterPosx.setName("AutoCorrelatedTwoRayInterferenceModel_xTx");
+                transmitterPosy.setName("AutoCorrelatedTwoRayInterferenceModel_yTx");
+                channel_d.setName("AutoCorrelatedTwoRayInterferenceModel_deltaD");
 
         }
 
