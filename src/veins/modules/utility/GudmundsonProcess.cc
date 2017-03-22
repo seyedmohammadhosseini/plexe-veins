@@ -32,8 +32,12 @@ double GudmundsonProcess::getProcessValue(double distance) const {
         double new_var      = pow(sigma,2)*(1-pow(rho,2));
         double oldVal       = processValue;
         processValue        = (RNGCONTEXT normal(new_mean, sqrt(new_var)));
-        EV << " (old, new, rho, mean, var) = (" << oldVal << ", " << processValue << ", " << rho << ", " << new_mean << ", " << new_var << ")" << endl;
+        EV << "GudmundsonProcess::getProcessValue(ID, old, new, rho, mean, var) = (" << id << ", "<< oldVal << ", " << processValue << ", " << rho << ", " << new_mean << ", " << new_var << ")" << endl;
     }
 
     return processValue;
+}
+
+int GudmundsonProcess::getId() const {
+    return id;
 }

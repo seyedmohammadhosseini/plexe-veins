@@ -24,15 +24,20 @@
 
 class GudmundsonProcess {
 public:
-    GudmundsonProcess(double correlationDistance, double sigma) : correlationDistance(correlationDistance), sigma(sigma) {};
+    GudmundsonProcess(double correlationDistance, double sigma, int id=-1) : correlationDistance(correlationDistance), sigma(sigma), id(id) {};
 
     double getProcessValue(double dist) const;
+
+    int getId() const;
 private:
     mutable bool firstTime;
     mutable double processValue;
 
     double correlationDistance;
     double sigma;
+
+    const int id;
+
 };
 
 #endif /* SRC_VEINS_MODULES_UTILITY_GUDMUNDSONPROCESS_H_ */
