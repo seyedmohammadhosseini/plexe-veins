@@ -20,3 +20,7 @@ tests/**/err.tmp
 examples/**/results
 examples/**/.tkenvrc
 examples/**/valgrind.out
+
+\.DS_Store
+
+*.dylib

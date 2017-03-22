@@ -24,7 +24,7 @@
 using Veins::AirFrame;
 
 
-#define debugEV EV << "PhyLagammayer(AutoCorrelatedSingleSlopeModel): "
+#define debugEV EV << "PhyLayer(AutoCorrelatedSingleSlopeModel): "
 
 void AutoCorrelatedSingleSlopeModel::filterSignal(AirFrame *frame, const Coord& senderPos, const Coord& receiverPos) {
     Signal& s = frame->getSignal();

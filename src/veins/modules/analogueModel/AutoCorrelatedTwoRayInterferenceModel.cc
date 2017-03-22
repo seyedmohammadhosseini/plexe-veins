@@ -24,7 +24,7 @@
 using Veins::AirFrame;
 
 
-#define debugEV EV << "PhyLagammayer(AutoCorrelatedTwoRayInterferenceModel): "
+#define debugEV EV << "PhyLayer(AutoCorrelatedTwoRayInterferenceModel): "
 
 void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const Coord& senderPos, const Coord& receiverPos) {
     Signal& s = frame->getSignal();
