@@ -54,7 +54,6 @@ void PhyLayer80211p::initialize(int stage) {
 		collectCollisionStatistics = par("collectCollisionStatistics").boolValue();
 		deCorrelationDistance = par("deCorrelationDistance").doubleValue();
 		correlationStdDev = par("correlationStdDev").doubleValue();
-		proc = new GudmundsonProcess(deCorrelationDistance, correlationStdDev, this->getId());
 	}
 	BasePhyLayer::initialize(stage);
 	if (stage == 0) {
@@ -66,8 +65,11 @@ void PhyLayer80211p::initialize(int stage) {
 	}
 }
 
-GudmundsonProcess* PhyLayer80211p::getAutoCorrelationProcess() {
-    return proc;
+GudmundsonProcess* PhyLayer80211p::getAutoCorrelationProcess(int id) {
+    if (processes.find(id) == processes.end()) {
+        processes[id] = new GudmundsonProcess(deCorrelationDistance, correlationStdDev, id);
+    }
+    return processes.find(id)->second;
 }
 
 AnalogueModel* PhyLayer80211p::getAnalogueModelFromName(std::string name, ParameterMap& params) {

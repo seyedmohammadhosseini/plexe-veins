@@ -95,7 +95,7 @@ class AutoCorrelatedSingleSlopeModel: public AnalogueModel {
         AutoCorrelatedSingleSlopeModel(double d0, double PL_d0, double alpha, double correlationDistance, double stdDev, bool debug) :
             d0(d0), PL_d0(PL_d0), correlationDistance(correlationDistance), stdDev(stdDev), debug(debug) {
 
-                proc = new GudmundsonProcess(correlationDistance, stdDev);
+                proc = new GudmundsonProcess(correlationDistance, stdDev, 0);
                 firstTime = true;
 
                 this->alpha = std::pow(10, alpha/10);

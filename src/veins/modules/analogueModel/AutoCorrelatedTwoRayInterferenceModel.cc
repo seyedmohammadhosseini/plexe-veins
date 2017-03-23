@@ -33,6 +33,14 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
     int idTx = s.getSendingModule()->getId();
     int idRx = s.getReceptionModule()->getId();
 
+    std::stringstream sstm;
+    if (idTx < idRx) {
+        sstm << idTx << idRx;
+    } else {
+        sstm << idRx << idTx;
+    }
+    int id = std::stoi(sstm.str());
+
     PhyLayer80211p* phyTx = dynamic_cast<PhyLayer80211p *>(s.getSendingModule());
     PhyLayer80211p* phyRx = dynamic_cast<PhyLayer80211p *>(s.getReceptionModule());
     assert(phyTx); assert(phyRx);
@@ -53,12 +61,9 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
 
     tworaydebuEV << "TxID -> RxID = " << idTx << " - > " << idRx << endl;
     if (s.getSendingModule()->getId() < s.getReceptionModule()->getId()) {
-        processValue = phyTx->getAutoCorrelationProcess()->getProcessValue(delta_d);
-        tworaydebuEV << "Using process with id = " << phyTx->getAutoCorrelationProcess()->getId() << endl;
-    }
+        processValue = phyTx->getAutoCorrelationProcess(id)->getProcessValue(delta_d);    }
     else {
-        processValue = phyRx->getAutoCorrelationProcess()->getProcessValue(delta_d);
-        tworaydebuEV << "Using process with id = " << phyRx->getAutoCorrelationProcess()->getId() << endl;
+        processValue = phyRx->getAutoCorrelationProcess(id)->getProcessValue(delta_d);
     }
 
     oldSenderPos2D = Coord(senderPos2D);

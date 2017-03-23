@@ -68,7 +68,7 @@ class PhyLayer80211p	: 	public BasePhyLayer,
 		 */
 		double getCCAThreshold();
 
-		GudmundsonProcess* getAutoCorrelationProcess();
+		GudmundsonProcess* getAutoCorrelationProcess(int id);
 
 	protected:
 
@@ -82,7 +82,8 @@ class PhyLayer80211p	: 	public BasePhyLayer,
 
 		double deCorrelationDistance;
 
-		GudmundsonProcess* proc;
+		typedef std::map<int, GudmundsonProcess*> ProcessMap;
+		ProcessMap processes;
 
 		/** @brief allows/disallows interruption of current reception for txing
 		 *
