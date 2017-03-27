@@ -25,7 +25,6 @@
 #include "veins/base/phyLayer/AnalogueModel.h"
 #include "veins/base/modules/BaseWorldUtility.h"
 #include "veins/base/phyLayer/MappingBase.h"
-#include "veins/modules/utility/GudmundsonProcess.h"
 
 
 using Veins::AirFrame;
@@ -49,12 +48,6 @@ class AutoCorrelatedTwoRayInterferenceMapping;
         <AnalogueModel type="AutoCorrelatedTwoRayInterferenceModel">
             <parameter name="DielectricConstantReal" type="double" value="5.02" />
             <parameter name="DielectricConstantImag" type="double" value="-0.1" />
-
-            <!-- Given in meters [m] -->
-            <parameter name="CorrelationDistance" type="double" value="36.0" />
-
-            <!-- Given in log scale -->
-            <parameter name="stdDev" type="double" value="3.12" />
 
             <!-- Given in log scale -->
             <parameter name="g_LOS" type="double" value="-0.8" />
@@ -80,7 +73,6 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
         Coord oldSenderPos2D;
         Coord oldReceiverPos2D;
 
-        GudmundsonProcess* proc;
         dcomplex epsilon_r;
         double correlationDistance;
         double processValue;
@@ -101,13 +93,12 @@ class AutoCorrelatedTwoRayInterferenceModel: public AnalogueModel {
         cOutVector channel_d;
 
     public:
-        AutoCorrelatedTwoRayInterferenceModel(double dielectricConstantReal, double dielectricConstantImag, double correlationDistance,
-                                              double g_LOS, double g_gr_LOS, double delta_phi, double stdDev, bool debug) :
-                                                  correlationDistance(correlationDistance), delta_phi(delta_phi), stdDev(stdDev), debug(debug) {
+        AutoCorrelatedTwoRayInterferenceModel(double dielectricConstantReal, double dielectricConstantImag,
+                                              double g_LOS, double g_gr_LOS, double delta_phi, bool debug) :
+                                                  delta_phi(delta_phi), debug(debug) {
 
                 epsilon_r.real(dielectricConstantReal);
                 epsilon_r.imag(dielectricConstantImag);
-                proc = new GudmundsonProcess(correlationDistance, stdDev);
                 this->g_LOS = std::pow(10, g_LOS/20.0);
                 this->g_gr_LOS = std::pow(10, g_gr_LOS/20.0);
                 firstTime = true;

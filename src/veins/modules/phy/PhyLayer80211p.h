@@ -31,6 +31,7 @@
 #include "veins/base/connectionManager/BaseConnectionManager.h"
 #include "veins/modules/phy/Decider80211pToPhy80211pInterface.h"
 #include "veins/base/utils/Move.h"
+#include "veins/modules/utility/GudmundsonProcess.h"
 
 using Veins::AirFrame;
 
@@ -66,6 +67,9 @@ class PhyLayer80211p	: 	public BasePhyLayer,
 		 * @brief Return the cca threshold in dBm
 		 */
 		double getCCAThreshold();
+
+		GudmundsonProcess* getAutoCorrelationProcess(int id);
+
 	protected:
 
 		/** @brief CCA threshold. See Decider80211p for details */
@@ -73,6 +77,13 @@ class PhyLayer80211p	: 	public BasePhyLayer,
 
 		/** @brief enable/disable detection of packet collisions */
 		bool collectCollisionStatistics;
+
+		double correlationStdDev;
+
+		double deCorrelationDistance;
+
+		typedef std::map<int, GudmundsonProcess*> ProcessMap;
+		ProcessMap processes;
 
 		/** @brief allows/disallows interruption of current reception for txing
 		 *

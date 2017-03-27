@@ -20,14 +20,30 @@
 
 #include "veins/modules/analogueModel/AutoCorrelatedTwoRayInterferenceModel.h"
 #include "veins/base/messages/AirFrame_m.h"
+#include "veins/modules/phy/PhyLayer80211p.h"
 
 using Veins::AirFrame;
 
 
-#define debugEV EV << "PhyLayer(AutoCorrelatedTwoRayInterferenceModel): "
+#define debugACTREV EV << "PhyLayer(AutoCorrelatedTwoRayInterferenceModel): "
 
 void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const Coord& senderPos, const Coord& receiverPos) {
     Signal& s = frame->getSignal();
+
+    int idTx = s.getSendingModule()->getId();
+    int idRx = s.getReceptionModule()->getId();
+
+    std::stringstream sstm;
+    if (idTx < idRx) {
+        sstm << idTx << idRx;
+    } else {
+        sstm << idRx << idTx;
+    }
+    int id = std::stoi(sstm.str());
+
+    PhyLayer80211p* phyTx = dynamic_cast<PhyLayer80211p *>(s.getSendingModule());
+    PhyLayer80211p* phyRx = dynamic_cast<PhyLayer80211p *>(s.getReceptionModule());
+    assert(phyTx); assert(phyRx);
 
     const Coord senderPos2D(senderPos.x, senderPos.y);
     const Coord receiverPos2D(receiverPos.x, receiverPos.y);
@@ -43,7 +59,12 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
         delta_d = (dTx + dRx)/2;
     }
 
-    processValue = proc->getProcessValue(delta_d);
+    debugACTREV << "TxID -> RxID = " << idTx << " - > " << idRx << endl;
+    if (s.getSendingModule()->getId() < s.getReceptionModule()->getId()) {
+        processValue = phyTx->getAutoCorrelationProcess(id)->getProcessValue(delta_d);    }
+    else {
+        processValue = phyRx->getAutoCorrelationProcess(id)->getProcessValue(delta_d);
+    }
 
     oldSenderPos2D = Coord(senderPos2D);
     oldReceiverPos2D  = Coord(receiverPos2D);
@@ -60,7 +81,7 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
     double d = senderPos2D.distance(receiverPos2D);
     double ht = senderPos.z, hr = receiverPos.z;
 
-    debugEV << "(ht, hr) = (" << ht << ", " << hr << ")" << endl;
+    debugACTREV << "(ht, hr) = (" << ht << ", " << hr << ")" << endl;
 
     double d_dir = sqrt( pow (d,2) + pow((ht - hr),2) ); // direct distance
     double d_ref = sqrt( pow (d,2) + pow((ht + hr),2) ); // distance via ground reflection
@@ -72,11 +93,11 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
 
     //is the signal defined to attenuate over frequency?
     bool hasFrequency = s.getTransmissionPower()->getDimensionSet().hasDimension(Dimension::frequency());
-    debugEV << "Signal contains frequency dimension: " << (hasFrequency ? "yes" : "no") << endl;
+    debugACTREV << "Signal contains frequency dimension: " << (hasFrequency ? "yes" : "no") << endl;
 
     assert(hasFrequency);
 
-    debugEV << "Add TwoRayInterferenceModel attenuation (gamma, d, d_dir, d_ref) = (" << reflectionCoeff << ", " << d << ", " << d_dir << ", " << d_ref << ")" << endl;
+    debugACTREV << "Add TwoRayInterferenceModel attenuation (gamma, d, d_dir, d_ref) = (" << reflectionCoeff << ", " << d << ", " << d_dir << ", " << d_ref << ")" << endl;
     s.addAttenuation(new AutoCorrelatedTwoRayInterferenceMapping(this, reflectionCoeff, d, d_dir, d_ref, debug));
 
     if (firstTime) {firstTime = false;}
@@ -104,7 +125,7 @@ double AutoCorrelatedTwoRayInterferenceMapping::getValue(const Argument& pos) co
     if (debug) {
         model->deterministicGain.record(gain_dB);
         model->stochasticGain.record(gain_dB_process);
-        debugEV << "Add gain for (freq, lambda, phi, gamma, att, att_dBm) = (" << freq << ", " << lambda << ", " << phi << ", " << reflectionCoeff << ", " << gain_linear_process << ", " << FWMath::mW2dBm(gain_linear_process) << ")" << endl;
+        debugACTREV << "Add gain for (freq, lambda, phi, gamma, att, att_dBm) = (" << freq << ", " << lambda << ", " << phi << ", " << reflectionCoeff << ", " << gain_linear_process << ", " << FWMath::mW2dBm(gain_linear_process) << ")" << endl;
     }
 
     return gain_linear_process;

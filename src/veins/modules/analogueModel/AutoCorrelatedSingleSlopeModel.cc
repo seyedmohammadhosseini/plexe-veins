@@ -20,14 +20,30 @@
 
 #include "veins/modules/analogueModel/AutoCorrelatedSingleSlopeModel.h"
 #include "veins/base/messages/AirFrame_m.h"
+#include "veins/modules/phy/PhyLayer80211p.h"
 
 using Veins::AirFrame;
 
 
-#define debugEV EV << "PhyLayer(AutoCorrelatedSingleSlopeModel): "
+#define debugACSSEV EV << "PhyLayer(AutoCorrelatedSingleSlopeModel): "
 
 void AutoCorrelatedSingleSlopeModel::filterSignal(AirFrame *frame, const Coord& senderPos, const Coord& receiverPos) {
     Signal& s = frame->getSignal();
+
+    int idTx = s.getSendingModule()->getId();
+    int idRx = s.getReceptionModule()->getId();
+
+    std::stringstream sstm;
+    if (idTx < idRx) {
+        sstm << idTx << idRx;
+    } else {
+        sstm << idRx << idTx;
+    }
+    int id = std::stoi(sstm.str());
+
+    PhyLayer80211p* phyTx = dynamic_cast<PhyLayer80211p *>(s.getSendingModule());
+    PhyLayer80211p* phyRx = dynamic_cast<PhyLayer80211p *>(s.getReceptionModule());
+    assert(phyTx); assert(phyRx);
 
     const Coord senderPos2D(senderPos.x, senderPos.y);
     const Coord receiverPos2D(receiverPos.x, receiverPos.y);
@@ -43,7 +59,12 @@ void AutoCorrelatedSingleSlopeModel::filterSignal(AirFrame *frame, const Coord& 
         delta_d = (dTx + dRx)/2;
     }
 
-    processValue = proc->getProcessValue(delta_d);
+    debugACSSEV << "TxID -> RxID = " << idTx << " - > " << idRx << endl;
+    if (s.getSendingModule()->getId() < s.getReceptionModule()->getId()) {
+        processValue = phyTx->getAutoCorrelationProcess(id)->getProcessValue(delta_d);    }
+    else {
+        processValue = phyRx->getAutoCorrelationProcess(id)->getProcessValue(delta_d);
+    }
 
     oldSenderPos2D = Coord(senderPos2D);
     oldReceiverPos2D  = Coord(receiverPos2D);
@@ -73,7 +94,7 @@ double AutoCorrelatedSingleSlopeMapping::getValue(const Argument& pos) const {
     if (debug) {
         model->deterministicGain.record(gain_dB);
         model->stochasticGain.record(gain_dB_process);
-        debugEV << "Add gain (gain, gain_dB) = (" << gain_linear_process << ", " << FWMath::mW2dBm(gain_linear_process) << ")" << endl;
+        debugACSSEV << "Add gain (gain, gain_dB) = (" << gain_linear_process << ", " << FWMath::mW2dBm(gain_linear_process) << ")" << endl;
     }
 
     return gain_linear_process;

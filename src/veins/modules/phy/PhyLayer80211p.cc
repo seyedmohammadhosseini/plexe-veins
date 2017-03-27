@@ -52,6 +52,8 @@ void PhyLayer80211p::initialize(int stage) {
 		ccaThreshold = pow(10, par("ccaThreshold").doubleValue() / 10);
 		allowTxDuringRx = par("allowTxDuringRx").boolValue();
 		collectCollisionStatistics = par("collectCollisionStatistics").boolValue();
+		deCorrelationDistance = par("deCorrelationDistance").doubleValue();
+		correlationStdDev = par("correlationStdDev").doubleValue();
 	}
 	BasePhyLayer::initialize(stage);
 	if (stage == 0) {
@@ -61,6 +63,13 @@ void PhyLayer80211p::initialize(int stage) {
 		//erase the RadioStateAnalogueModel
 		analogueModels.erase(analogueModels.begin());
 	}
+}
+
+GudmundsonProcess* PhyLayer80211p::getAutoCorrelationProcess(int id) {
+    if (processes.find(id) == processes.end()) {
+        processes[id] = new GudmundsonProcess(deCorrelationDistance, correlationStdDev, id);
+    }
+    return processes.find(id)->second;
 }
 
 AnalogueModel* PhyLayer80211p::getAnalogueModelFromName(std::string name, ParameterMap& params) {
@@ -237,22 +246,17 @@ AnalogueModel* PhyLayer80211p::initializeTwoRayInterferenceModel(ParameterMap& p
 
 AnalogueModel* PhyLayer80211p::initializeAutoCorrelatedTwoRayInterferenceModel(ParameterMap& params) {
     ASSERT(params.count("DielectricConstantReal") == 1);
-    ASSERT(params.count("DielectricConstantImag") == 1);
-    ASSERT(params.count("stdDev") == 1);
-    ASSERT(params.count("g_LOS") == 1);
+    ASSERT(params.count("DielectricConstantImag") == 1);    ASSERT(params.count("g_LOS") == 1);
     ASSERT(params.count("g_gr_LOS") == 1);
-    ASSERT(params.count("CorrelationDistance") == 1);
     ASSERT(params.count("delta_phi") == 1);
 
-    double stdDev = params["stdDev"].doubleValue();
-    double correlationDistance = params["CorrelationDistance"].doubleValue();
     double eps_r_real = params["DielectricConstantReal"].doubleValue();
     double eps_r_imag = params["DielectricConstantImag"].doubleValue();
     double g_LOS = params["g_LOS"].doubleValue();
     double g_gr_LOS = params["g_gr_LOS"].doubleValue();
     double delta_phi = params["delta_phi"].doubleValue();
 
-    return new AutoCorrelatedTwoRayInterferenceModel(eps_r_real, eps_r_imag, correlationDistance, g_LOS, g_gr_LOS, delta_phi, stdDev, coreDebug);
+    return new AutoCorrelatedTwoRayInterferenceModel(eps_r_real, eps_r_imag, g_LOS, g_gr_LOS, delta_phi, coreDebug);
 }
 
 AnalogueModel* PhyLayer80211p::initializeAutoCorrelatedSingleSlopeModel(ParameterMap& params) {
@@ -265,10 +269,8 @@ AnalogueModel* PhyLayer80211p::initializeAutoCorrelatedSingleSlopeModel(Paramete
     double d0 = params["d0"].doubleValue();
     double PL_d0 = params["PL_d0"].doubleValue();
     double alpha = params["alpha"].doubleValue();
-    double stdDev = params["stdDev"].doubleValue();
-    double correlationDistance = params["CorrelationDistance"].doubleValue();
 
-    return new AutoCorrelatedSingleSlopeModel(d0, PL_d0, alpha, correlationDistance, stdDev, coreDebug);
+    return new AutoCorrelatedSingleSlopeModel(d0, PL_d0, alpha, coreDebug);
 }
 
 AnalogueModel* PhyLayer80211p::initializeNakagamiFading(ParameterMap& params) {

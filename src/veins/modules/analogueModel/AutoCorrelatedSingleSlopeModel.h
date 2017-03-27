@@ -23,7 +23,6 @@
 
 #include "veins/base/phyLayer/AnalogueModel.h"
 #include "veins/base/phyLayer/MappingBase.h"
-#include "veins/modules/utility/GudmundsonProcess.h"
 
 
 using Veins::AirFrame;
@@ -52,12 +51,6 @@ class AutoCorrelatedSingleSlopeMapping;
             <!-- Given in log scale -->
             <parameter name="alpha" type="double" value="2.73" />
 
-            <!-- Given in meters [m] -->
-            <parameter name="CorrelationDistance" type="double" value="36.0" />
-
-            <!-- Given in log scale -->
-            <parameter name="stdDev" type="double" value="5.52" />
-
         </AnalogueModel>
     </AnalogueModels>
    @endverbatim
@@ -74,13 +67,10 @@ class AutoCorrelatedSingleSlopeModel: public AnalogueModel {
         double d0;
         double PL_d0;
         double alpha;
-        double correlationDistance;
-        double stdDev;
 
         bool firstTime;
         bool debug;
 
-        GudmundsonProcess* proc;
         double processValue;
 
         Coord oldSenderPos2D;
@@ -92,10 +82,9 @@ class AutoCorrelatedSingleSlopeModel: public AnalogueModel {
         cOutVector channel_d;
 
     public:
-        AutoCorrelatedSingleSlopeModel(double d0, double PL_d0, double alpha, double correlationDistance, double stdDev, bool debug) :
-            d0(d0), PL_d0(PL_d0), correlationDistance(correlationDistance), stdDev(stdDev), debug(debug) {
+        AutoCorrelatedSingleSlopeModel(double d0, double PL_d0, double alpha, bool debug) :
+            d0(d0), PL_d0(PL_d0), debug(debug) {
 
-                proc = new GudmundsonProcess(correlationDistance, stdDev);
                 firstTime = true;
 
                 this->alpha = std::pow(10, alpha/10);

@@ -21,18 +21,30 @@
 #ifndef SRC_VEINS_MODULES_UTILITY_GUDMUNDSONPROCESS_H_
 #define SRC_VEINS_MODULES_UTILITY_GUDMUNDSONPROCESS_H_
 
+#include <omnetpp.h>
+using namespace omnetpp;
 
 class GudmundsonProcess {
 public:
-    GudmundsonProcess(double correlationDistance, double sigma) : correlationDistance(correlationDistance), sigma(sigma) {};
+    GudmundsonProcess(double correlationDistance, double sigma, int id) : correlationDistance(correlationDistance), sigma(sigma), id(id) {
+        recordProcessValue.setName("Gudmundson Process");
+    };
 
     double getProcessValue(double dist) const;
+
+    int getId() const;
 private:
     mutable bool firstTime;
     mutable double processValue;
 
     double correlationDistance;
     double sigma;
+
+    const int id;
+
+protected:
+    mutable cOutVector recordProcessValue;
+
 };
 
 #endif /* SRC_VEINS_MODULES_UTILITY_GUDMUNDSONPROCESS_H_ */
