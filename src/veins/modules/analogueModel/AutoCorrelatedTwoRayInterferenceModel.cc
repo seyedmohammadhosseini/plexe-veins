@@ -25,7 +25,7 @@
 using Veins::AirFrame;
 
 
-#define tworaydebuEV EV << "PhyLayer(AutoCorrelatedTwoRayInterferenceModel): "
+#define debugACTREV EV << "PhyLayer(AutoCorrelatedTwoRayInterferenceModel): "
 
 void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const Coord& senderPos, const Coord& receiverPos) {
     Signal& s = frame->getSignal();
@@ -59,7 +59,7 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
         delta_d = (dTx + dRx)/2;
     }
 
-    tworaydebuEV << "TxID -> RxID = " << idTx << " - > " << idRx << endl;
+    debugACTREV << "TxID -> RxID = " << idTx << " - > " << idRx << endl;
     if (s.getSendingModule()->getId() < s.getReceptionModule()->getId()) {
         processValue = phyTx->getAutoCorrelationProcess(id)->getProcessValue(delta_d);    }
     else {
@@ -81,7 +81,7 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
     double d = senderPos2D.distance(receiverPos2D);
     double ht = senderPos.z, hr = receiverPos.z;
 
-    tworaydebuEV << "(ht, hr) = (" << ht << ", " << hr << ")" << endl;
+    debugACTREV << "(ht, hr) = (" << ht << ", " << hr << ")" << endl;
 
     double d_dir = sqrt( pow (d,2) + pow((ht - hr),2) ); // direct distance
     double d_ref = sqrt( pow (d,2) + pow((ht + hr),2) ); // distance via ground reflection
@@ -93,11 +93,11 @@ void AutoCorrelatedTwoRayInterferenceModel::filterSignal(AirFrame *frame, const 
 
     //is the signal defined to attenuate over frequency?
     bool hasFrequency = s.getTransmissionPower()->getDimensionSet().hasDimension(Dimension::frequency());
-    tworaydebuEV << "Signal contains frequency dimension: " << (hasFrequency ? "yes" : "no") << endl;
+    debugACTREV << "Signal contains frequency dimension: " << (hasFrequency ? "yes" : "no") << endl;
 
     assert(hasFrequency);
 
-    tworaydebuEV << "Add TwoRayInterferenceModel attenuation (gamma, d, d_dir, d_ref) = (" << reflectionCoeff << ", " << d << ", " << d_dir << ", " << d_ref << ")" << endl;
+    debugACTREV << "Add TwoRayInterferenceModel attenuation (gamma, d, d_dir, d_ref) = (" << reflectionCoeff << ", " << d << ", " << d_dir << ", " << d_ref << ")" << endl;
     s.addAttenuation(new AutoCorrelatedTwoRayInterferenceMapping(this, reflectionCoeff, d, d_dir, d_ref, debug));
 
     if (firstTime) {firstTime = false;}
@@ -125,7 +125,7 @@ double AutoCorrelatedTwoRayInterferenceMapping::getValue(const Argument& pos) co
     if (debug) {
         model->deterministicGain.record(gain_dB);
         model->stochasticGain.record(gain_dB_process);
-        tworaydebuEV << "Add gain for (freq, lambda, phi, gamma, att, att_dBm) = (" << freq << ", " << lambda << ", " << phi << ", " << reflectionCoeff << ", " << gain_linear_process << ", " << FWMath::mW2dBm(gain_linear_process) << ")" << endl;
+        debugACTREV << "Add gain for (freq, lambda, phi, gamma, att, att_dBm) = (" << freq << ", " << lambda << ", " << phi << ", " << reflectionCoeff << ", " << gain_linear_process << ", " << FWMath::mW2dBm(gain_linear_process) << ")" << endl;
     }
 
     return gain_linear_process;
