@@ -269,10 +269,8 @@ AnalogueModel* PhyLayer80211p::initializeAutoCorrelatedSingleSlopeModel(Paramete
     double d0 = params["d0"].doubleValue();
     double PL_d0 = params["PL_d0"].doubleValue();
     double alpha = params["alpha"].doubleValue();
-    double stdDev = params["stdDev"].doubleValue();
-    double correlationDistance = params["CorrelationDistance"].doubleValue();
 
-    return new AutoCorrelatedSingleSlopeModel(d0, PL_d0, alpha, correlationDistance, stdDev, coreDebug);
+    return new AutoCorrelatedSingleSlopeModel(d0, PL_d0, alpha, coreDebug);
 }
 
 AnalogueModel* PhyLayer80211p::initializeNakagamiFading(ParameterMap& params) {

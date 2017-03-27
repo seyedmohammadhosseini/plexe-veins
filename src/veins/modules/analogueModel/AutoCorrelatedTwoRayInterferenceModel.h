@@ -49,12 +49,6 @@ class AutoCorrelatedTwoRayInterferenceMapping;
             <parameter name="DielectricConstantReal" type="double" value="5.02" />
             <parameter name="DielectricConstantImag" type="double" value="-0.1" />
 
-            <!-- Given in meters [m] -->
-            <parameter name="CorrelationDistance" type="double" value="36.0" />
-
-            <!-- Given in log scale -->
-            <parameter name="stdDev" type="double" value="3.12" />
-
             <!-- Given in log scale -->
             <parameter name="g_LOS" type="double" value="-0.8" />
 

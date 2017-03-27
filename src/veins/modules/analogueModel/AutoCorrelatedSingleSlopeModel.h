@@ -51,12 +51,6 @@ class AutoCorrelatedSingleSlopeMapping;
             <!-- Given in log scale -->
             <parameter name="alpha" type="double" value="2.73" />
 
-            <!-- Given in meters [m] -->
-            <parameter name="CorrelationDistance" type="double" value="36.0" />
-
-            <!-- Given in log scale -->
-            <parameter name="stdDev" type="double" value="5.52" />
-
         </AnalogueModel>
     </AnalogueModels>
    @endverbatim
@@ -88,7 +82,7 @@ class AutoCorrelatedSingleSlopeModel: public AnalogueModel {
         cOutVector channel_d;
 
     public:
-        AutoCorrelatedSingleSlopeModel(double d0, double PL_d0, double alpha, double correlationDistance, double stdDev, bool debug) :
+        AutoCorrelatedSingleSlopeModel(double d0, double PL_d0, double alpha, bool debug) :
             d0(d0), PL_d0(PL_d0), debug(debug) {
 
                 firstTime = true;
