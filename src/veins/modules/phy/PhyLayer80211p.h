@@ -78,9 +78,14 @@ class PhyLayer80211p	: 	public BasePhyLayer,
 		/** @brief enable/disable detection of packet collisions */
 		bool collectCollisionStatistics;
 
+		/** @brief The standard deviation for the auto-correlation process. */
 		double correlationStdDev;
 
+		/** @brief The De-correlation distance for the auto-correlation process. */
 		double deCorrelationDistance;
+
+		/** @brief Per car offset from the deterministic value by the analogue model. */
+		double carSpecificUncertainty;
 
 		typedef std::map<int, GudmundsonProcess*> ProcessMap;
 		ProcessMap processes;
@@ -101,6 +106,14 @@ class PhyLayer80211p	: 	public BasePhyLayer,
 		 * Is able to initialize the following AnalogueModels:
 		 */
 		virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params);
+
+		/**
+		 * @brief Return the car specific parameter that will offset the received power.
+		 * This has been seen in measurement campaigns that two cars with the same type of
+		 * antennas and modems still show significant difference in received power. The
+		 * purpose of this parameter is to capture some of the stochastic behaviour.
+		 */
+		double getCarParameter();
 
 		/**
 		 * @brief Creates and initializes a SimplePathlossModel with the

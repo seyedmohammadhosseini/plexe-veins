@@ -43,6 +43,13 @@ simple PhyLayer80211p extends BasePhyLayer
         //requires phy to transmit a frame while currently receiveing another
         bool allowTxDuringRx = default(false);
         
+        // Parameters for the auto-correlation process. The analogue models that are used must
+        // implement the use of an auto-correlation process, else these parameters will not
+        // affect anything in the simulation.
+        // Typical parameters can be found in
+        // Nilsson, M. G., Gustafson, C., Abbas, T., & Tufvesson, F.
+        // A Measurement Based Multilink Shadowing Model for V2V Network Simulations of Highway Scenarios, 1–10.
         double deCorrelationDistance @unit(m) = default(73.5 m);
         double correlationStdDev @unit(dB) = default(3.12 dB);
+        double carSpecificUncertainty @unit(dB) = default(0 dB);
 }

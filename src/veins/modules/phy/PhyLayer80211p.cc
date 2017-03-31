@@ -54,6 +54,7 @@ void PhyLayer80211p::initialize(int stage) {
 		collectCollisionStatistics = par("collectCollisionStatistics").boolValue();
 		deCorrelationDistance = par("deCorrelationDistance").doubleValue();
 		correlationStdDev = par("correlationStdDev").doubleValue();
+		carSpecificUncertainty = par("carSpecificUncertainty").doubleValue();
 	}
 	BasePhyLayer::initialize(stage);
 	if (stage == 0) {
@@ -63,6 +64,10 @@ void PhyLayer80211p::initialize(int stage) {
 		//erase the RadioStateAnalogueModel
 		analogueModels.erase(analogueModels.begin());
 	}
+}
+
+double PhyLayer80211p::getCarParameter() {
+    return this->carSpecificUncertainty;
 }
 
 GudmundsonProcess* PhyLayer80211p::getAutoCorrelationProcess(int id) {
