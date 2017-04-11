@@ -39,6 +39,11 @@ void AutoCorrelatedSingleSlopeModel::filterSignal(AirFrame *frame, const Coord& 
     } else {
         sstm << idRx << idTx;
     }
+    /**
+     * On gcc compilers previous to 4.8, it seems that stoi does not work.
+     * IF that is the case either upgrade to a newer compiler or try
+     * int id = std::atoi(sstm.str().c_str());
+     */
     int id = std::stoi(sstm.str());
 
     PhyLayer80211p* phyTx = dynamic_cast<PhyLayer80211p *>(s.getSendingModule());
