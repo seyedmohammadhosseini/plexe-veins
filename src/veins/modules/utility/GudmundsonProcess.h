@@ -34,7 +34,7 @@ public:
 
     int getId() const;
 private:
-    mutable bool firstTime;
+    mutable bool firstTime = true;
     mutable double processValue;
 
     double correlationDistance;
