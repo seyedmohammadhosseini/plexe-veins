@@ -268,8 +268,6 @@ AnalogueModel* PhyLayer80211p::initializeAutoCorrelatedSingleSlopeModel(Paramete
     ASSERT(params.count("d0") == 1);
     ASSERT(params.count("PL_d0") == 1);
     ASSERT(params.count("alpha") == 1);
-    ASSERT(params.count("CorrelationDistance") == 1);
-    ASSERT(params.count("stdDev") == 1);
 
     double d0 = params["d0"].doubleValue();
     double PL_d0 = params["PL_d0"].doubleValue();
