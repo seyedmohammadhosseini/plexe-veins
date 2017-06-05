@@ -145,6 +145,7 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	unicast->setPriority(priority);
 	unicast->setTimestamp(timestamp);
 	unicast->setKind(kind);
+	unicast->setChannel(channel);
 	//encapsulate message. NOTICE that we are encapsulating the message directly
 	//decapsulated from the message coming from the application. we could use
 	//msg->dup(), but then, since msg has been decapsulated, we would have to
@@ -154,7 +155,7 @@ void UnicastProtocol::sendMessageDown(int destination, cPacket *msg, int encapsu
 	WaveShortMessage *wsm = new WaveShortMessage();
 	populateWSM(wsm, 0, unicast->getSequenceNumber());
 	wsm->setChannelNumber(channel);
-	wsm->setPriority(priority);
+	wsm->setUserPriority(priority);
 	wsm->encapsulate(unicast);
 	//include control info that might have been set at higher layers
 	if (msg->getControlInfo()){
@@ -188,12 +189,13 @@ void UnicastProtocol::sendAck(const UnicastMessage *msg)
 	unicast->setSequenceNumber(msg->getSequenceNumber());
 	unicast->setByteLength(0);
 	unicast->setPriority(0);
+	unicast->setChannel(msg->getChannel());
 	unicast->setType(ACK);
 
 	WaveShortMessage *wsm = new WaveShortMessage();
 	populateWSM(wsm, 0, msg->getSequenceNumber());
 	wsm->setChannelNumber(msg->getChannel());
-	wsm->setPriority(msg->getPriority());
+	wsm->setUserPriority(msg->getPriority());
 	wsm->encapsulate(unicast);
 	sendDown(wsm);
 
@@ -205,7 +207,7 @@ void UnicastProtocol::resendMessage()
 	WaveShortMessage *wsm = new WaveShortMessage();
 	populateWSM(wsm, 0, currentMsg->getSequenceNumber());
 	wsm->setChannelNumber(currentMsg->getChannel());
-	wsm->setPriority(currentMsg->getPriority());
+	wsm->setUserPriority(currentMsg->getPriority());
 	wsm->encapsulate(currentMsg->dup());
 	sendDown(wsm);
 
