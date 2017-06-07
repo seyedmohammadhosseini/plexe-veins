@@ -1,4 +1,4 @@
-#include "/home/hh-ide/src/plexe-veins/src/veins/base/utils/Coord.h"
+#include "veins/base/utils/Coord.h"
 
 #ifdef WITH_INET
 
