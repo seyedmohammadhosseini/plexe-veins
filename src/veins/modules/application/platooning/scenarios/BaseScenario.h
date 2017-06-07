@@ -26,6 +26,8 @@
 
 #include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
 
+#include "veins/modules/application/platooning/utilities/PositionHelper.h"
+
 class BaseScenario : public BaseApplLayer
 {
 
@@ -43,6 +45,7 @@ class BaseScenario : public BaseApplLayer
 
 		//determines position and role of each vehicle
 		BasePositionHelper *positionHelper;
+		PositionHelper *posHelper;
 
 		//controller used by followers
 		enum Plexe::ACTIVE_CONTROLLER controller;

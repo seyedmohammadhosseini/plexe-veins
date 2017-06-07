@@ -23,6 +23,8 @@ void SinusoidalScenario::initialize(int stage) {
 
 	BaseScenario::initialize(stage);
 
+
+
 	if (stage == 1) {
 		//get the oscillation frequency of the leader as parameter
 		leaderOscillationFrequency = par("leaderOscillationFrequency").doubleValue();
@@ -51,6 +53,8 @@ void SinusoidalScenario::initialize(int stage) {
 			//to the leader when it is accelerating
 			traciVehicle->setCruiseControlDesiredSpeed(leaderSpeed + 2 * oscillationAmplitude);
 		}
+		measure = new cMessage("measure");
+		scheduleAt(SimTime(3), measure);
 
 	}
 
@@ -72,4 +76,58 @@ void SinusoidalScenario::handleSelfMsg(cMessage *msg) {
 		);
 		scheduleAt(simTime() + SimTime(0.1), changeSpeed);
 	}
+	else if(msg == measure){
+	    int veh_ID = positionHelper->getId();
+
+//	    std::string ex_ID = positionHelper->getExternalId();
+//	    std::string ex_ID = posHelper->getStringIDOfVehicle(veh_ID);
+
+	    std::string dummy = positionHelper->vehicleTypeNames;
+	    std::vector<std::string> dummy_vec = positionHelper->vehIDInString;
+	    std::string type_veh = dummy_vec.at(veh_ID);
+	    double w = traciVehicle->getVehicleWidth(type_veh);
+	    double h = traciVehicle->getVehicleHeight(type_veh);
+
+	    scheduleAt(simTime() + SimTime(1), measure);
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

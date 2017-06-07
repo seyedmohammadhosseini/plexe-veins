@@ -25,6 +25,11 @@ simple PositionHelper like BasePositionHelper
 
         //number of cars in the scenario
         int nCars;
+        int nTruck;
+        int nBus;
+        
+        string vehicleType;
+        string vehicleTypeNames;
         //number of cars per platoon
         int platoonSize;
         //number of lanes

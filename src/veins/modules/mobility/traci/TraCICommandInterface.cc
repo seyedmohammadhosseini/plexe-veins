@@ -37,6 +37,22 @@ std::pair<uint32_t, std::string> TraCICommandInterface::getVersion() {
 	return std::pair<uint32_t, std::string>(apiVersion, serverVersion);
 }
 
+//Modified by karthikeyan
+double TraCICommandInterface::Vehicle::getVehicleLength(std::string nodeId){
+    //std::string str_ID = pHelper->getStringIDOfVehicle(nodeId);
+    return traci->genericGetDouble(CMD_GET_VEHICLE_VARIABLE, nodeId, VAR_LENGTH, RESPONSE_GET_VEHICLE_VARIABLE);
+}
+//Modified by karthikeyan
+double TraCICommandInterface::Vehicle::getVehicleWidth(std::string nodeId){
+    //std::string str_ID = pHelper->getStringIDOfVehicle(nodeId);
+    return traci->genericGetDouble(CMD_GET_VEHICLE_VARIABLE, nodeId, VAR_WIDTH, RESPONSE_GET_VEHICLE_VARIABLE);
+}
+//Modified by karthikeyan
+double TraCICommandInterface::Vehicle::getVehicleHeight(std::string nodeId){
+    //std::string str_ID = pHelper->getStringIDOfVehicle(nodeId);
+    return traci->genericGetDouble(CMD_GET_VEHICLE_VARIABLE, nodeId, VAR_HEIGHT, RESPONSE_GET_VEHICLE_VARIABLE);
+}
+
 void TraCICommandInterface::Vehicle::setSpeedMode(int32_t bitset) {
 	uint8_t variableId = VAR_SPEEDSETMODE;
 	uint8_t variableType = TYPE_INTEGER;
@@ -104,6 +120,7 @@ double TraCICommandInterface::Road::getMeanSpeed() {
 std::string TraCICommandInterface::Vehicle::getRoadId() {
 	return traci->genericGetString(CMD_GET_VEHICLE_VARIABLE, nodeId, VAR_ROAD_ID, RESPONSE_GET_VEHICLE_VARIABLE);
 }
+
 
 std::string TraCICommandInterface::Vehicle::getCurrentRoadOnRoute() {
 	return traci->genericGetString(CMD_GET_VEHICLE_VARIABLE, nodeId, LANE_EDGE_ID, RESPONSE_GET_VEHICLE_VARIABLE);

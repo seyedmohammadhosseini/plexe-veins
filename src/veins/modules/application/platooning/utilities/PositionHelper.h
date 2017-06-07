@@ -19,6 +19,12 @@
 #define POSITIONHELPER_H_
 
 #include "veins/modules/application/platooning/utilities/BasePositionHelper.h"
+#include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include    <list>
+
 
 /**
  * Defines position utility functions for platoons organized in the following
@@ -101,6 +107,22 @@ class PositionHelper : public BasePositionHelper
 		PositionHelper() : BasePositionHelper() {
 		}
 
+		/* Modified by Karthikeyan*/
+		int getIdOfDifferentVehicles(std::string externalId);
+        /*
+         * get the name of the vehicle type
+         */
+		std::string getStringIDOfVehicle(int vehicleID);
+		std::vector<int> vehInOrder;
+
+		void getVehicleID(std::string word);
+        void stringToVector(std::string word);
+        void convertStringVehicleID(std::string word);
+        int nTruck;
+        int nBus;
+        std::string vehicleType;
+
+        std::string Id_sumo;
 };
 
 #endif

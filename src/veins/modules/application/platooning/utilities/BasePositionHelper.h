@@ -167,11 +167,14 @@ class BasePositionHelper : public BaseApplLayer
 		 */
 		virtual void setPlatoonSize(int size);
 
+        Veins::TraCIMobility* mobility;
+        Veins::TraCICommandInterface *traci;
+        Veins::TraCICommandInterface::Vehicle *traciVehicle;
+
+
 	protected:
 
-		Veins::TraCIMobility* mobility;
-		Veins::TraCICommandInterface *traci;
-		Veins::TraCICommandInterface::Vehicle *traciVehicle;
+
 
 		//id of this vehicle
 		int myId;
@@ -196,6 +199,8 @@ class BasePositionHelper : public BaseApplLayer
 		//lane of this car's platoon
 		int platoonLane;
 
+
+
 	public:
 		BasePositionHelper() {
 			mobility = 0;
@@ -215,7 +220,15 @@ class BasePositionHelper : public BaseApplLayer
 			leader = false;
 			platoonId = INVALID_PLATOON_ID;
 			platoonLane = -1;
+//			vehicleTypeNames.empty();
+//			vehIDInString.empty();
+
+
 		}
+
+        std::string vehicleTypeNames;
+        std::vector<std::string> vehIDInString;
+
 
 };
 

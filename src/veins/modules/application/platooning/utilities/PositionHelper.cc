@@ -25,13 +25,23 @@ void PositionHelper::initialize(int stage) {
 
 	if (stage == 0) {
 		nCars = par("nCars").longValue();
-		myId = getIdFromExternalId(getExternalId());
+		nTruck = par("nTruck").longValue();
+		nBus = par("nBus").longValue();
+
+		vehicleType = par("vehicleType").stdstringValue();
+		vehicleTypeNames = par("vehicleTypeNames").stdstringValue();
+		stringToVector(vehicleType);
+		getVehicleID(vehicleTypeNames);
+		Id_sumo = vehIDInString.at(0);
+		myId = getIdOfDifferentVehicles(getExternalId());
 		leaderId = getPlatoonLeader(myId, nLanes, platoonSize);
 		leader = myId == leaderId;
 		frontId = getFrontVehicle(myId, nLanes, platoonSize);
 		position = getPositionInPlatoon(myId, nLanes, platoonSize);
 		platoonId = getPlatoonNumber(myId, nLanes, platoonSize);
 		platoonLane = getPlatoonLane(myId, nLanes);
+
+
 	}
 
 }
@@ -111,4 +121,109 @@ bool PositionHelper::isFrontVehicle(int vehicleId, int myId, int nLanes, int pla
 }
 int PositionHelper::getPositionInPlatoon(int vehicleId, int nLanes, int platoonSize) {
 	return (vehicleId - getPlatoonLeader(vehicleId, nLanes, platoonSize)) / nLanes;
+}
+
+//Implemented by karthikeyan
+int PositionHelper::getIdOfDifferentVehicles(std::string externalId) {
+
+
+    if(externalId.substr(5,5).compare("auto1") == 0){
+        int dotIndex = externalId.find_last_of('.');
+        std::string strId = externalId.substr(dotIndex + 1);
+        int num = strtol(strId.c_str(), 0, 10);
+        int count=0;
+        int index=0;
+        std::vector<int>::iterator it = vehInOrder.begin();
+        while(it != vehInOrder.end()){
+            if(*it == 1){
+                if(count == num){
+                    return index;
+                }
+                count++;
+            }
+            index++;
+            it++;
+        }
+    }
+    else if(externalId.substr(5,5).compare("auto2") == 0){
+        int dotIndex = externalId.find_last_of('.');
+        std::string strId = externalId.substr(dotIndex + 1);
+        int num = strtol(strId.c_str(), 0, 10);
+        int count=0;
+        int index=0;
+        std::vector<int>::iterator it = vehInOrder.begin();
+        while(it != vehInOrder.end()){
+            if(*it == 2){
+                if(count == num){
+                    return index;
+                }
+                count++;
+            }
+            index++;
+            it++;
+        }
+    }
+    else if(externalId.substr(5,5).compare("auto3") == 0){
+        int dotIndex = externalId.find_last_of('.');
+        std::string strId = externalId.substr(dotIndex + 1);
+        int num = strtol(strId.c_str(), 0, 10);
+        int count=0;
+        int index=0;
+        std::vector<int>::iterator it = vehInOrder.begin();
+        while(it != vehInOrder.end()){
+            if(*it == 3){
+                if(count == num){
+                    return index;
+                }
+                count++;
+            }
+            index++;
+            it++;
+        }
+    }
+    return -1;
+}
+
+//Implemented by karthikeyan
+void PositionHelper::stringToVector(std::string word){
+
+    std::stringstream ss;
+    ss << word;
+
+    int value;
+    while (ss >> value)
+    {
+        vehInOrder.push_back(value);
+
+        if (ss.peek() == ',')
+            ss.ignore();
+    }
+}
+
+void PositionHelper::getVehicleID(std::string word){
+    std::stringstream ss;
+    ss << word;
+    std::string val;
+    while(getline(ss,val,',')){
+        vehIDInString.push_back(val);
+    }
+}
+
+
+
+//Implemented by karthikeyan
+std::string PositionHelper::getStringIDOfVehicle(int vehicleID){
+
+    return vehIDInString.at(vehicleID);
+/*    return "blaa";*/
+  /*  std::list<std::string> veh = traci->getVehicleTypeIds();
+    int type_num = vehInOrder.at(vehicleID);
+    std::vector<std::string> v;
+    v.reserve(veh.size());
+    std::copy(std::begin(veh), std::end(veh), std::back_inserter(v));
+    //std::vector<std::string> v{std::make_move_iterator(std::begin(veh)), std::make_move_iterator(std::end(veh)) };
+    std::string typeID = v.at(type_num);*/
+//    return trafficManager->vehicleTypeName.at(vehicleID);
+/*    std::string val = "blas";
+    return val;*/
 }

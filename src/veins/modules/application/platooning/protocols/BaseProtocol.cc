@@ -221,6 +221,9 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 
 		if (positionHelper->getLeaderId() == epkt->getVehicleId()) {
 			//check if this is at least the second message we have received
+//		    int L_ID = positionHelper->getLeaderId();
+//		    int Own_ID = positionHelper->getId();
+//		    int Sender_ID = epkt->getVehicleId();
 			if (lastLeaderMsgTime.dbl() > 0) {
 				leaderDelayOut.record(simTime() - lastLeaderMsgTime);
 				leaderDelayIdOut.record(myId);
@@ -230,6 +233,9 @@ void BaseProtocol::handleUnicastMsg(UnicastMessage *unicast) {
 		}
 		if (positionHelper->getFrontId() == epkt->getVehicleId()) {
 			//check if this is at least the second message we have received
+//		    int F_ID = positionHelper->getFrontId();
+//		    int Own_ID = positionHelper->getId();
+//		    int Sender_ID = epkt->getVehicleId();
 			if (lastFrontMsgTime.dbl() > 0) {
 				frontDelayOut.record(simTime() - lastFrontMsgTime);
 				frontDelayIdOut.record(myId);

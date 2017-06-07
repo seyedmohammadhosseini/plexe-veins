@@ -513,6 +513,9 @@
 // width (get: vehicle types, lanes)
 #define VAR_WIDTH 0x4d
 
+//height (get: vehicle types, lanes)
+#define VAR_HEIGHT 0xbc
+
 // shape (get: polygons)
 #define VAR_SHAPE 0x4e
 

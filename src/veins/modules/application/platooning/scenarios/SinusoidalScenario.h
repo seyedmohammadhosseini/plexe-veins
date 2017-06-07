@@ -27,7 +27,6 @@ class SinusoidalScenario : public BaseScenario
 
 		virtual void initialize(int stage);
 		virtual void finish();
-
 	protected:
 
 		//frequency at which the leader speed is oscillating
@@ -38,6 +37,7 @@ class SinusoidalScenario : public BaseScenario
 		double leaderSpeed;
 		//message used to tell the leader to continuously change its desired speed
 		cMessage *changeSpeed;
+		cMessage *measure;
 		//start oscillation time
 		SimTime startOscillating;
 
@@ -48,6 +48,7 @@ class SinusoidalScenario : public BaseScenario
 			leaderSpeed = 0;
 			changeSpeed = 0;
 			startOscillating = SimTime(0);
+			measure = 0;
 		}
 
 	protected:
