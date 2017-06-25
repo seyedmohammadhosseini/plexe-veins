@@ -111,7 +111,7 @@ class PhyLayer80211p	: 	public BasePhyLayer,
 		 * @brief Return the car specific parameter that will offset the received power.
 		 * This has been seen in measurement campaigns that two cars with the same type of
 		 * antennas and modems still show significant difference in received power. The
-		 * purpose of this parameter is to capture some of the stochastic behaviour.
+		 * purpose of this parameter is to capture some of the stochastic behavior.
 		 */
 		double getCarParameter();
 
@@ -126,6 +126,13 @@ class PhyLayer80211p	: 	public BasePhyLayer,
 		 * passed parameter values.
 		 */
 		AnalogueModel* initializeAntennaModel(ParameterMap& params);
+
+		/**
+		 * @brief Creates and initializes the ModelSelection analogue model.
+		 * It reads the models that have been declared in the configuration file
+		 * to be used in the the LOS or OLOS scenarios.
+		 */
+		AnalogueModel* initializeModelSelection(ParameterMap& params);
 
 		/**
 		 * @brief Creates and initializes a LogNormalShadowing with the

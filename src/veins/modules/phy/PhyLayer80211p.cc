@@ -36,6 +36,7 @@
 #include "veins/modules/analogueModel/AutoCorrelatedTwoRayInterferenceModel.h"
 #include "veins/modules/analogueModel/AutoCorrelatedSingleSlopeModel.h"
 #include "veins/modules/analogueModel/NakagamiFading.h"
+#include "veins/modules/analogueModel/ModelSelection.h"
 #include "veins/base/connectionManager/BaseConnectionManager.h"
 #include "veins/modules/utility/Consts80211p.h"
 #include "veins/modules/messages/AirFrame11p_m.h"
@@ -114,6 +115,9 @@ AnalogueModel* PhyLayer80211p::getAnalogueModelFromName(std::string name, Parame
     else if (name == "AutoCorrelatedSingleSlopeModel")
     {
         return initializeAutoCorrelatedSingleSlopeModel(params);
+    }
+    else if (name == "ModelSelection") {
+        return initializeModelSelection(params);
     }
 	else if (name == "NakagamiFading")
 	{
