@@ -30,7 +30,6 @@
 using Veins::ObstacleControl;
 using Veins::VehicleObstacle;
 
-#define EV std::cerr;
 
 Define_Module(Veins::ObstacleControl);
 
