@@ -8,6 +8,7 @@
 #ifndef SRC_VEINS_MODULES_ANALOGUEMODEL_MODELSELECTION_H_
 #define SRC_VEINS_MODULES_ANALOGUEMODEL_MODELSELECTION_H_
 
+#include <initializer_list>
 #include "veins/base/phyLayer/AnalogueModel.h"
 #include "veins/base/phyLayer/MappingBase.h"
 #include "veins/base/modules/BaseWorldUtility.h"
@@ -19,8 +20,10 @@ class ModelSelectionMapping;
 class ModelSelection : public AnalogueModel {
 protected:
     friend class ModelSelectionMapping;
+    typedef std::map<std::string, cMsgPar> ParameterMap;
+
 public:
-    ModelSelection();
+    ModelSelection(std::initializer_list<ParameterMap> param_list);
 
     virtual void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos);
 };

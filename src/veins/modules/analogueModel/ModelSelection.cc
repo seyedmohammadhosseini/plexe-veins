@@ -8,6 +8,8 @@
 #include "veins/modules/analogueModel/ModelSelection.h"
 #include "veins/base/messages/AirFrame_m.h"
 
+ModelSelection::ModelSelection(std::initializer_list<ParameterMap> param_list) {}
+
 void ModelSelection::filterSignal(AirFrame *frame, const Coord& senderPos, const Coord& receiverPos) {
     return;
 }
