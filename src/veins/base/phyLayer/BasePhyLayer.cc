@@ -399,12 +399,14 @@ void BasePhyLayer::initializeAnalogueModels(cXMLElement* xmlConfig) {
 
             coreEV << "AnalogueModel \"" << name << "\" loaded." << endl;
         } else {
+            /**
             std::map<std::string, AnalogueModel*> scenario_params;
             for(cXMLElementList::const_iterator sit = scenarios.begin(); sit != scenarios.end(); sit++) {
                 cXMLElement* scenario_data = *sit;
                 const char* scenario_type = scenario_data->getAttribute("type");
             }
             AnalogueModel* newAnalogueModel = getAnalogueModelFromName(name, params);
+            */
         }
 
 
