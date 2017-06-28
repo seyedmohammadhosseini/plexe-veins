@@ -12,6 +12,8 @@
 #include "veins/base/phyLayer/AnalogueModel.h"
 #include "veins/base/phyLayer/MappingBase.h"
 #include "veins/base/modules/BaseWorldUtility.h"
+#include "veins/base/phyLayer/BasePhyLayer.h"
+
 
 using Veins::AirFrame;
 
