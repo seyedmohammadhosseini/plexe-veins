@@ -126,6 +126,10 @@ AnalogueModel* PhyLayer80211p::getAnalogueModelFromName(std::string name, Parame
 	return BasePhyLayer::getAnalogueModelFromName(name, params);
 }
 
+AnalogueModel* PhyLayer80211p::initializeModelSelection(ParameterMap& params) {
+    return new ModelSelection(params);
+}
+
 AnalogueModel* PhyLayer80211p::initializeLogNormalShadowing(ParameterMap& params) {
 	double mean = params["mean"].doubleValue();
 	double stdDev = params["stdDev"].doubleValue();

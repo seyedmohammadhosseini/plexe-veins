@@ -68,6 +68,22 @@ class PhyLayer80211p	: 	public BasePhyLayer,
 		 */
 		double getCCAThreshold();
 
+        /**
+         * @brief Creates and returns an instance of the AnalogueModel with the
+         * specified name.
+         *
+         * Is able to initialize the following AnalogueModels:
+         */
+        virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params);
+
+        /**
+         * @brief Return the car specific parameter that will offset the received power.
+         * This has been seen in measurement campaigns that two cars with the same type of
+         * antennas and modems still show significant difference in received power. The
+         * purpose of this parameter is to capture some of the stochastic behavior.
+         */
+        double getCarParameter();
+
 		GudmundsonProcess* getAutoCorrelationProcess(int id);
 
 	protected:
@@ -99,21 +115,6 @@ class PhyLayer80211p	: 	public BasePhyLayer,
 		enum ProtocolIds {
 			IEEE_80211 = 12123
 		};
-		/**
-		 * @brief Creates and returns an instance of the AnalogueModel with the
-		 * specified name.
-		 *
-		 * Is able to initialize the following AnalogueModels:
-		 */
-		virtual AnalogueModel* getAnalogueModelFromName(std::string name, ParameterMap& params);
-
-		/**
-		 * @brief Return the car specific parameter that will offset the received power.
-		 * This has been seen in measurement campaigns that two cars with the same type of
-		 * antennas and modems still show significant difference in received power. The
-		 * purpose of this parameter is to capture some of the stochastic behavior.
-		 */
-		double getCarParameter();
 
 		/**
 		 * @brief Creates and initializes a SimplePathlossModel with the
