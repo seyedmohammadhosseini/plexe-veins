@@ -8,19 +8,26 @@
 #ifndef SRC_VEINS_MODULES_ANALOGUEMODEL_MODELSELECTION_H_
 #define SRC_VEINS_MODULES_ANALOGUEMODEL_MODELSELECTION_H_
 
+#include "veins/base/modules/BaseWorldUtility.h"
+
 #include "veins/base/phyLayer/AnalogueModel.h"
 #include "veins/base/phyLayer/MappingBase.h"
-#include "veins/base/modules/BaseWorldUtility.h"
 #include "veins/base/phyLayer/BasePhyLayer.h"
-#include "veins/modules/phy/PhyLayer80211p.h"
+#include "veins/base/phyLayer/Mapping.h"
+
+#include "veins/base/messages/AirFrame_m.h"
+#include "veins/base/utils/Move.h"
+
+#include "veins/modules/obstacle/ObstacleControl.h"
+
 
 using Veins::AirFrame;
+using Veins::ObstacleControl;
 
-class ModelSelectionMapping;
 
 class ModelSelection : public AnalogueModel {
+
 protected:
-    friend class ModelSelectionMapping;
 
     /**
      * @brief Used at initialisation to pass the parameters
@@ -28,11 +35,15 @@ protected:
      */
     typedef std::map<std::string, cMsgPar> ParameterMap;
 
+    /** @brief reference to global ObstacleControl instance */
+    ObstacleControl& obstacleControl;
+
 public:
 
-    ModelSelection(ParameterMap& scenarios);
+    ModelSelection(ObstacleControl& obstacleControl, ParameterMap& scenarios);
 
     virtual void filterSignal(AirFrame *frame, const Coord& sendersPos, const Coord& receiverPos);
+
 
 private:
     AnalogueModel* LOS;
@@ -48,18 +59,5 @@ private:
     void getParametersFromXML(cXMLElement* xmlData, ParameterMap& outputMap);
 };
 
-class ModelSelectionMapping : public SimpleConstMapping {
-private:
-    ModelSelection* model;
-public:
-    ModelSelectionMapping(ModelSelection* model)
-        : SimpleConstMapping(DimensionSet::timeFreqDomain()), model(model) {}
-
-    virtual double getValue(const Argument& pos) const;
-
-    ConstMapping* constClone() const {
-        return new ModelSelectionMapping(*this);
-    }
-};
 
 #endif /* SRC_VEINS_MODULES_ANALOGUEMODEL_MODELSELECTION_H_ */

@@ -127,7 +127,9 @@ AnalogueModel* PhyLayer80211p::getAnalogueModelFromName(std::string name, Parame
 }
 
 AnalogueModel* PhyLayer80211p::initializeModelSelection(ParameterMap& params) {
-    return new ModelSelection(params);
+    ObstacleControl* obstacleControlP = ObstacleControlAccess().getIfExists();
+    if (!obstacleControlP) throw cRuntimeError("initializeSimpleObstacleShadowing(): cannot find ObstacleControl module");
+    return new ModelSelection(*obstacleControlP, params);
 }
 
 AnalogueModel* PhyLayer80211p::initializeLogNormalShadowing(ParameterMap& params) {

@@ -6,24 +6,26 @@
  */
 
 #include "veins/modules/analogueModel/ModelSelection.h"
-#include "veins/base/messages/AirFrame_m.h"
-#include "veins/modules/obstacle/ObstacleControl.h"
-#include "veins/modules/obstacle/VehicleObstacle.h"
+#include "veins/base/phyLayer/Signal_.h"
+#include "veins/modules/phy/PhyLayer80211p.h"
+
+using Veins::AirFrame;
 
 
-ModelSelection::ModelSelection(ParameterMap& scenarios) {
+ModelSelection::ModelSelection(ObstacleControl& obstacleControl, ParameterMap& scenarios) : obstacleControl(obstacleControl) {
 
     ParameterMap::iterator it;
 
     it = scenarios.find("LOS");
     if (it != scenarios.end()) {
-        parseAnalagoueModels(it->second.xmlValue());
+        LOS = parseAnalagoueModels(it->second.xmlValue());
     }
 
     it = scenarios.find("OLOS");
     if (it != scenarios.end()) {
-        parseAnalagoueModels(it->second.xmlValue());
+        OLOS = parseAnalagoueModels(it->second.xmlValue());
     }
+
 }
 
 AnalogueModel* ModelSelection::parseAnalagoueModels(cXMLElement* scenario) {
@@ -106,11 +108,14 @@ void ModelSelection::getParametersFromXML(cXMLElement* xmlData, ParameterMap& ou
 }
 
 void ModelSelection::filterSignal(AirFrame *frame, const Coord& senderPos, const Coord& receiverPos) {
+    // const double not_a_number = std::numeric_limits<double>::quiet_NaN();
+
+    Signal& s = frame->getSignal();
+
+    if (obstacleControl.calculateVehicleAttenuation(senderPos, receiverPos, s) > 0) {
+        OLOS->filterSignal(frame, senderPos, receiverPos);
+    } else {
+        LOS->filterSignal(frame, senderPos, receiverPos);
+    }
     return;
 }
-
-double ModelSelectionMapping::getValue(const Argument& pos) const {
-    // TODO: Implement selection of LOS or OLOS model depending on situation.
-    return 1;
-}
-
