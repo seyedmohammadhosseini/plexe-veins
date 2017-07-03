@@ -206,6 +206,8 @@ private:
 
 protected:
 
+    void findWorldUtilityModule();
+
 	/**
 	 * @brief Reads and returns the parameter with the passed name.
 	 *

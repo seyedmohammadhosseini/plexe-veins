@@ -104,12 +104,14 @@ AnalogueModel* PhyLayer80211p::getAnalogueModelFromName(std::string name, Parame
 	}
 	else if (name == "TwoRayInterferenceModel")
 	{
+        findWorldUtilityModule();
 		if (world->use2D()) error("The TwoRayInterferenceModel uses nodes' z-position as the antenna height over ground. Refusing to work in a 2D world");
 		return initializeTwoRayInterferenceModel(params);
 	}
     else if (name == "AutoCorrelatedTwoRayInterferenceModel")
     {
-        if (world->use2D()) error("The AutoCorrelatedTwoRayInterferenceModel uses nodes' z-position as the antenna height over ground. Refusing to work in a 2D world");
+        findWorldUtilityModule();
+        if (world->use2D()) error("The TwoRayInterferenceModel uses nodes' z-position as the antenna height over ground. Refusing to work in a 2D world");
         return initializeAutoCorrelatedTwoRayInterferenceModel(params);
     }
     else if (name == "AutoCorrelatedSingleSlopeModel")
@@ -261,7 +263,8 @@ AnalogueModel* PhyLayer80211p::initializeTwoRayInterferenceModel(ParameterMap& p
 
 AnalogueModel* PhyLayer80211p::initializeAutoCorrelatedTwoRayInterferenceModel(ParameterMap& params) {
     ASSERT(params.count("DielectricConstantReal") == 1);
-    ASSERT(params.count("DielectricConstantImag") == 1);    ASSERT(params.count("g_LOS") == 1);
+    ASSERT(params.count("DielectricConstantImag") == 1);
+    ASSERT(params.count("g_LOS") == 1);
     ASSERT(params.count("g_gr_LOS") == 1);
     ASSERT(params.count("delta_phi") == 1);
 

@@ -81,11 +81,7 @@ void BasePhyLayer::initialize(int stage) {
 		//	- initialize radio
 		radio = initializeRadio();
 
-		// get pointer to the world module
-		world = FindModule<BaseWorldUtility*>::findGlobalModule();
-        if (world == NULL) {
-            throw cRuntimeError("Could not find BaseWorldUtility module");
-        }
+		findWorldUtilityModule();
 
         if(cc->hasPar("sat")
 		   && (sensitivity - FWMath::dBm2mW(cc->par("sat").doubleValue())) < -0.000001) {
@@ -110,6 +106,14 @@ void BasePhyLayer::initialize(int stage) {
 		txOverTimer = new cMessage("transmission over", TX_OVER);
 
 	}
+}
+
+void BasePhyLayer::findWorldUtilityModule() {
+    // get pointer to the world module
+    world = FindModule<BaseWorldUtility*>::findGlobalModule();
+    if (world == NULL) {
+        throw cRuntimeError("Could not find BaseWorldUtility module");
+    }
 }
 
 Radio* BasePhyLayer::initializeRadio() {
