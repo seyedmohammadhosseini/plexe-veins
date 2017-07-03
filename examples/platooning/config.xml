@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<AnalogueModels>
-		<AnalogueModel type="SimplePathlossModel">
-			<parameter name="carrierFrequency" type="double" value="5.890e+9"/>
-			<parameter name="alpha" type="double" value="2"/>
+			<AnalogueModel type="ModelSelection">
+			<Scenario type="LOS">
+				<AnalogueModel type="AutoCorrelatedTwoRayInterferenceModel">
+					<parameter name="DielectricConstantReal"        type="double" value="5.0" />
+					<parameter name="DielectricConstantImag"        type="double" value="-0.2" />
+					<parameter name="g_LOS" 						type="double" value="-0.8" />
+					<parameter name="g_gr_LOS" 						type="double" value="-6.42" />
+					<parameter name="delta_phi" 					type="double" value="-0.60266219071364202" />
+				</AnalogueModel> 
+			</Scenario>
+			<Scenario type="OLOS">
+				<AnalogueModel type="AutoCorrelatedSingleSlopeModel">
+                    <parameter name="d0" 		type="double" value="10.0" />
+                    <parameter name="PL_d0" 	type="double" value="59.53" />
+                    <parameter name="alpha"     type="double" value="2.73" />
+				</AnalogueModel>
+			</Scenario>
 		</AnalogueModel>
-		<!--<AnalogueModel type="TwoRayInterferenceModel">
-			<parameter name="DielectricConstant" type="double" value="1.02"/>
-		</AnalogueModel>
-		<AnalogueModel type="SimpleObstacleShadowing">
-			<parameter name="carrierFrequency" type="double" value="5.890e+9"/>
-		</AnalogueModel>-->
 	</AnalogueModels>
 	<Decider type="Decider80211p">
 		<!-- The center frequency on which the phy listens-->
