@@ -367,6 +367,7 @@ void BasePhyLayer::initializeAnalogueModels(cXMLElement* xmlConfig) {
 		throw cRuntimeError("No analogue models configuration file specified.");
 	}
 
+    cXMLElementList analogueModelsXML = xmlConfig->getChildrenByTagName("AnalogueModels");
     cXMLElementList analogueModelList = xmlConfig->getElementsByTagName("AnalogueModel");
 
     if(analogueModelList.empty()) {
@@ -375,42 +376,47 @@ void BasePhyLayer::initializeAnalogueModels(cXMLElement* xmlConfig) {
 
     // iterate over all AnalogueModel-entries, get a new AnalogueModel instance and add
     // it to analogueModels
-    for(cXMLElementList::const_iterator it = analogueModelList.begin();
-        it != analogueModelList.end(); it++) {
+     for(cXMLElementList::const_iterator it0 = analogueModelsXML.begin(); it0 != analogueModelsXML.end(); it0++) {
+        cXMLElement* model = *it0;
+        cXMLElementList analogueModelList = model->getChildrenByTagName("AnalogueModel");
+        for(cXMLElementList::const_iterator it = analogueModelList.begin();
+            it != analogueModelList.end(); it++) {
 
-        cXMLElement* analogueModelData = *it;
+            cXMLElement* analogueModelData = *it;
 
-        const char* name = analogueModelData->getAttribute("type");
+            const char* name = analogueModelData->getAttribute("type");
 
-        if(name == 0) {
-            throw cRuntimeError("Could not read name of analogue model.");
-        }
-
-        cXMLElementList scenarios = analogueModelData->getElementsByTagName("Scenario");
-
-        ParameterMap params;
-        if (scenarios.empty()) {
-            getParametersFromXML(analogueModelData, params);
-        } else {
-            for(cXMLElementList::const_iterator sit = scenarios.begin(); sit != scenarios.end(); sit++) {
-                cXMLElement* scenario_data = *sit;
-                const char* scenario_type = scenario_data->getAttribute("type");
-                params[scenario_type] = scenario_data;
+            if(name == 0) {
+                throw cRuntimeError("Could not read name of analogue model.");
             }
+
+            cXMLElementList scenarios = analogueModelData->getChildrenByTagName("Scenario");
+
+            ParameterMap params;
+            if (scenarios.empty()) {
+                getParametersFromXML(analogueModelData, params);
+            } else {
+                for(cXMLElementList::const_iterator sit = scenarios.begin(); sit != scenarios.end(); sit++) {
+                    cXMLElement* scenario_data = *sit;
+                    const char* scenario_type = scenario_data->getAttribute("type");
+                    std::cerr << "BasePhyLayer::initializeAnalogueModels  :: scenario_type.name = " << scenario_type << endl;
+                    params[scenario_type] = scenario_data;
+                }
+            }
+
+            AnalogueModel* newAnalogueModel = getAnalogueModelFromName(name, params);
+
+            if(newAnalogueModel == 0) {
+                throw cRuntimeError("Could not find an analogue model with the name \"%s\".", name);
+            }
+
+            // attach the new AnalogueModel to the AnalogueModelList
+            analogueModels.push_back(newAnalogueModel);
+
+            coreEV << "AnalogueModel \"" << name << "\" loaded." << endl;
+            std::cerr << "AnalogueModel \"" << name << "\" loaded." << endl;
+
         }
-
-        AnalogueModel* newAnalogueModel = getAnalogueModelFromName(name, params);
-
-        if(newAnalogueModel == 0) {
-            throw cRuntimeError("Could not find an analogue model with the name \"%s\".", name);
-        }
-
-        // attach the new AnalogueModel to the AnalogueModelList
-        analogueModels.push_back(newAnalogueModel);
-
-        coreEV << "AnalogueModel \"" << name << "\" loaded." << endl;
-
-
     } // end iterator loop
 
 }
