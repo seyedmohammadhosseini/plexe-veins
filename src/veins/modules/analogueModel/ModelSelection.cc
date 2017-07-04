@@ -108,13 +108,10 @@ void ModelSelection::getParametersFromXML(cXMLElement* xmlData, ParameterMap& ou
 }
 
 void ModelSelection::filterSignal(AirFrame *frame, const Coord& senderPos, const Coord& receiverPos) {
-    // const double not_a_number = std::numeric_limits<double>::quiet_NaN();
-
     Signal& s = frame->getSignal();
     double att = obstacleControl.calculateVehicleAttenuation(senderPos, receiverPos, s);
 
-
-    if (att > 0) {
+    if (att != 1) {
         OLOS->filterSignal(frame, senderPos, receiverPos);
     } else {
         LOS->filterSignal(frame, senderPos, receiverPos);

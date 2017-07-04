@@ -399,7 +399,6 @@ void BasePhyLayer::initializeAnalogueModels(cXMLElement* xmlConfig) {
                 for(cXMLElementList::const_iterator sit = scenarios.begin(); sit != scenarios.end(); sit++) {
                     cXMLElement* scenario_data = *sit;
                     const char* scenario_type = scenario_data->getAttribute("type");
-                    std::cerr << "BasePhyLayer::initializeAnalogueModels  :: scenario_type.name = " << scenario_type << endl;
                     params[scenario_type] = scenario_data;
                 }
             }
@@ -414,7 +413,6 @@ void BasePhyLayer::initializeAnalogueModels(cXMLElement* xmlConfig) {
             analogueModels.push_back(newAnalogueModel);
 
             coreEV << "AnalogueModel \"" << name << "\" loaded." << endl;
-            std::cerr << "AnalogueModel \"" << name << "\" loaded." << endl;
 
         }
     } // end iterator loop
